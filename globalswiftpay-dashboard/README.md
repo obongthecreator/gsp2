@@ -111,9 +111,21 @@ A professional investment dashboard plugin for WordPress with glass morphism des
 3. Activate the plugin through WordPress admin
 4. A dashboard page will be created automatically at `/gsp-dashboard/`
 
-## Shortcode
+## Shortcodes
 
-Use the shortcode `[gsp_dashboard]` on any page to display the dashboard.
+Use the shortcode `[gsp_dashboard]` on any page to display the user dashboard.
+
+Use the shortcode `[gsp_admin_dashboard]` on any page to display the admin frontend dashboard.
+
+### Forgot Password
+
+The forgot password page uses the shortcode from the GlobalSwiftPay2 plugin:
+
+```
+[gsp2_forgot_password]
+```
+
+Create a new WordPress page with this shortcode to provide a forgot password form for users. The page is also available at `/gsp2-forgot-password/`.
 
 ## Requirements
 
@@ -123,7 +135,7 @@ Use the shortcode `[gsp_dashboard]` on any page to display the dashboard.
 
 ## Logout Behavior
 
-When users log out, they are automatically redirected to `globalswiftpay2.com`.
+When users log out from the dashboard, they are automatically redirected to the login page (`/gsp2-login/`). This can be customized via the `logout_redirect_url` setting in the plugin's database settings.
 
 ## Customization
 

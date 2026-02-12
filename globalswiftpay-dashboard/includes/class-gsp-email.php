@@ -144,7 +144,7 @@ class GSP_Email {
         <p><?php echo esc_html($message); ?></p>
         <div class="amount">$<?php echo number_format($amount, 2); ?></div>
         <p>Status: <span class="status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_text); ?></span></p>
-        <a href="https://globalswiftpay2.com/gsp-dashboard" class="btn">View Dashboard</a>
+        <a href="<?php echo esc_url(home_url("/gsp-dashboard/")); ?>" class="btn">View Dashboard</a>
         <?php
         $content = ob_get_clean();
         
@@ -174,7 +174,7 @@ class GSP_Email {
         <p><?php echo esc_html($message); ?></p>
         <div class="amount">$<?php echo number_format($amount, 2); ?></div>
         <p>Status: <span class="status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_text); ?></span></p>
-        <a href="https://globalswiftpay2.com/gsp-dashboard" class="btn">View Dashboard</a>
+        <a href="<?php echo esc_url(home_url("/gsp-dashboard/")); ?>" class="btn">View Dashboard</a>
         <?php
         $content = ob_get_clean();
         
@@ -208,7 +208,7 @@ class GSP_Email {
         <p><?php echo esc_html($message); ?></p>
         <div class="amount">$<?php echo number_format($amount, 2); ?></div>
         <p>Status: <span class="status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_text); ?></span></p>
-        <a href="https://globalswiftpay2.com/gsp-dashboard" class="btn">View Dashboard</a>
+        <a href="<?php echo esc_url(home_url("/gsp-dashboard/")); ?>" class="btn">View Dashboard</a>
         <?php
         $content = ob_get_clean();
         
@@ -250,7 +250,7 @@ class GSP_Email {
         <div class="amount">$<?php echo number_format($amount, 2); ?></div>
         <p>Conversion Type: <strong><?php echo esc_html($type_label); ?></strong></p>
         <p>Status: <span class="status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_text); ?></span></p>
-        <a href="https://globalswiftpay2.com/gsp-dashboard" class="btn">View Dashboard</a>
+        <a href="<?php echo esc_url(home_url("/gsp-dashboard/")); ?>" class="btn">View Dashboard</a>
         <?php
         $content = ob_get_clean();
         
@@ -283,7 +283,7 @@ class GSP_Email {
         <div class="amount">$<?php echo number_format($amount, 2); ?></div>
         <p>Conversion Type: <strong><?php echo esc_html($type_label); ?></strong></p>
         <p>Status: <span class="status-badge" style="background-color: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 4px 12px; border-radius: 20px;">Pending Review</span></p>
-        <a href="https://globalswiftpay2.com/gsp-dashboard" class="btn">View Dashboard</a>
+        <a href="<?php echo esc_url(home_url("/gsp-dashboard/")); ?>" class="btn">View Dashboard</a>
         <?php
         $content = ob_get_clean();
         

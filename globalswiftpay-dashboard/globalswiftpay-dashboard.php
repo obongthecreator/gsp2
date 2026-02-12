@@ -147,7 +147,7 @@ class GlobalSwiftPay_Dashboard {
             wp_localize_script('gsp-dashboard-script', 'gsp_ajax', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('gsp_nonce'),
-                'home_url' => 'https://globalswiftpay2.com'
+                'home_url' => home_url('/')
             ));
         }
         
@@ -222,7 +222,7 @@ class GlobalSwiftPay_Dashboard {
     
     public function render_dashboard_shortcode($atts) {
         if (!is_user_logged_in()) {
-            return '<div class="gsp-login-required"><p>' . __('Please log in to access your dashboard.', 'globalswiftpay-dashboard') . '</p><a href="https://globalswiftpay2.com/gsp2-login/" class="gsp-btn gsp-btn-primary">' . __('Login', 'globalswiftpay-dashboard') . '</a></div>';
+            return '<div class="gsp-login-required"><p>' . __('Please log in to access your dashboard.', 'globalswiftpay-dashboard') . '</p><a href="' . esc_url(home_url('/gsp2-login/')) . '" class="gsp-btn gsp-btn-primary">' . __('Login', 'globalswiftpay-dashboard') . '</a></div>';
         }
         
         ob_start();
@@ -235,7 +235,7 @@ class GlobalSwiftPay_Dashboard {
      */
     public function render_admin_frontend_shortcode($atts) {
         if (!is_user_logged_in()) {
-            return '<div class="gsp-login-required"><p>' . __('Please log in to access the admin dashboard.', 'globalswiftpay-dashboard') . '</p><a href="https://globalswiftpay2.com/gsp2-login/" class="gsp-btn gsp-btn-primary">' . __('Login', 'globalswiftpay-dashboard') . '</a></div>';
+            return '<div class="gsp-login-required"><p>' . __('Please log in to access the admin dashboard.', 'globalswiftpay-dashboard') . '</p><a href="' . esc_url(home_url('/gsp2-login/')) . '" class="gsp-btn gsp-btn-primary">' . __('Login', 'globalswiftpay-dashboard') . '</a></div>';
         }
         
         if (!current_user_can('manage_options')) {
@@ -251,7 +251,7 @@ class GlobalSwiftPay_Dashboard {
         // Get logout redirect URL from settings, with fallback to login page
         $logout_url = GSP_Database::get_setting('logout_redirect_url');
         if (empty($logout_url)) {
-            $logout_url = 'https://globalswiftpay2.com/gsp2-login/';
+            $logout_url = home_url('/gsp2-login/');
         }
         
         // Validate the URL

@@ -348,7 +348,7 @@ class GSP_Database {
             'btc_address' => '',
             'usdt_address' => '',
             'company_email' => '',
-            'logout_redirect_url' => 'https://globalswiftpay2.com/gsp2-login/'
+            'logout_redirect_url' => '/gsp2-login/'
         );
     }
 
