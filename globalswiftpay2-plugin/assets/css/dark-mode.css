@@ -1,0 +1,423 @@
+/**
+ * GlobalSwiftPay2 - Dark Mode Stylesheet
+ */
+
+/* ===== Dark Mode Variables ===== */
+.gsp2-theme.gsp2-dark-mode {
+    --gsp2-bg-primary: #0f172a;
+    --gsp2-bg-secondary: #1e293b;
+    --gsp2-bg-tertiary: #334155;
+    --gsp2-text-primary: #f8fafc;
+    --gsp2-text-secondary: #cbd5e1;
+    --gsp2-text-muted: #94a3b8;
+    --gsp2-border: #334155;
+    
+    --gsp2-glass-bg: rgba(30, 41, 59, 0.8);
+    --gsp2-glass-border: rgba(255, 255, 255, 0.1);
+    --gsp2-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Dark Mode Specific Styles ===== */
+.gsp2-dark-mode {
+    background-color: #0f172a !important;
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-dark-mode .gsp2-main {
+    background-color: #0f172a !important;
+}
+
+.gsp2-dark-mode .gsp2-page {
+    background-color: #0f172a !important;
+}
+
+.gsp2-dark-mode .gsp2-page-content {
+    background-color: #0f172a !important;
+}
+
+.gsp2-dark-mode .gsp2-glass-card {
+    background: var(--gsp2-glass-bg);
+    border-color: var(--gsp2-glass-border);
+}
+
+.gsp2-dark-mode .gsp2-trust {
+    background: transparent;
+}
+
+.gsp2-dark-mode .gsp2-trust-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gsp2-dark-mode .gsp2-trust-icon {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.gsp2-dark-mode .gsp2-crypto-section {
+    background: transparent;
+}
+
+/* Section heading glow for dark mode visibility */
+.gsp2-dark-mode .gsp2-h2,
+.gsp2-dark-mode .gsp2-how-works-header h2,
+.gsp2-dark-mode .gsp2-crypto-header h2 {
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+    color: #f8fafc;
+}
+
+.gsp2-dark-mode .gsp2-crypto-table-wrapper {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gsp2-dark-mode .gsp2-crypto-table th {
+    color: var(--gsp2-text-muted);
+}
+
+.gsp2-dark-mode .gsp2-crypto-table td {
+    color: var(--gsp2-text-primary);
+    border-color: var(--gsp2-border);
+}
+
+.gsp2-dark-mode .gsp2-crypto-table tr:hover {
+    background: var(--gsp2-bg-tertiary);
+}
+
+.gsp2-dark-mode .gsp2-form-input,
+.gsp2-dark-mode .gsp2-form-textarea {
+    background: var(--gsp2-bg-tertiary);
+    border-color: var(--gsp2-border);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-dark-mode .gsp2-form-input::placeholder,
+.gsp2-dark-mode .gsp2-form-textarea::placeholder {
+    color: var(--gsp2-text-muted);
+}
+
+.gsp2-dark-mode .gsp2-btn-secondary {
+    background: var(--gsp2-bg-tertiary);
+    border-color: var(--gsp2-border);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-dark-mode .gsp2-btn-secondary:hover {
+    background: var(--gsp2-border);
+}
+
+.gsp2-dark-mode .gsp2-modal-content {
+    background: var(--gsp2-bg-secondary);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-dark-mode .gsp2-btc-address {
+    background: var(--gsp2-bg-tertiary);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-dark-mode .gsp2-upload-area {
+    border-color: var(--gsp2-border);
+    color: var(--gsp2-text-muted);
+}
+
+.gsp2-dark-mode .gsp2-upload-area:hover {
+    border-color: var(--gsp2-primary);
+}
+
+.gsp2-dark-mode .gsp2-page-content {
+    background: var(--gsp2-bg-primary);
+}
+
+.gsp2-dark-mode .gsp2-content-section p {
+    color: var(--gsp2-text-secondary);
+}
+
+/* ===== Light Mode Variables ===== */
+.gsp2-theme.gsp2-light-mode {
+    --gsp2-bg-primary: #ffffff;
+    --gsp2-bg-secondary: #f8fafc;
+    --gsp2-bg-tertiary: #f1f5f9;
+    --gsp2-text-primary: #0f172a;
+    --gsp2-text-secondary: #475569;
+    --gsp2-text-muted: #94a3b8;
+    --gsp2-border: #e2e8f0;
+    
+    --gsp2-glass-bg: rgba(255, 255, 255, 0.8);
+    --gsp2-glass-border: rgba(0, 0, 0, 0.05);
+    --gsp2-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.gsp2-light-mode {
+    background-color: #ffffff !important;
+}
+
+.gsp2-light-mode .gsp2-main {
+    background-color: #ffffff !important;
+}
+
+.gsp2-light-mode .gsp2-page {
+    background-color: #ffffff !important;
+}
+
+.gsp2-light-mode .gsp2-page-content {
+    background-color: #ffffff !important;
+}
+
+/* ===== Light Mode Navigation Override ===== */
+.gsp2-light-mode .gsp2-nav-inner {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.gsp2-light-mode .gsp2-nav-logo {
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-nav-link {
+    color: var(--gsp2-text-secondary);
+}
+
+.gsp2-light-mode .gsp2-nav-link:hover {
+    color: var(--gsp2-text-primary);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.gsp2-light-mode .gsp2-nav-link.active {
+    color: var(--gsp2-primary);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.gsp2-light-mode .gsp2-nav-hamburger span {
+    background: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-dark-mode-toggle {
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.15);
+}
+
+.gsp2-light-mode .gsp2-dark-mode-toggle:hover {
+    background: rgba(15, 23, 42, 0.15);
+}
+
+.gsp2-light-mode .gsp2-dark-mode-toggle .iconify {
+    color: var(--gsp2-text-primary) !important;
+}
+
+/* REBUILT: Dark mode toggle with iconify-icon component */
+.gsp2-light-mode .gsp2-dark-mode-toggle .gsp2-moon-icon {
+    display: flex !important;
+}
+
+.gsp2-light-mode .gsp2-dark-mode-toggle .gsp2-moon-icon iconify-icon {
+    color: #0f172a !important;
+}
+
+.gsp2-dark-mode .gsp2-dark-mode-toggle .gsp2-sun-icon {
+    display: flex !important;
+}
+
+.gsp2-dark-mode .gsp2-dark-mode-toggle .gsp2-sun-icon iconify-icon {
+    color: #ffffff !important;
+}
+
+/* ===== Light Mode Button Glass (Login/Logout) ===== */
+.gsp2-light-mode .gsp2-btn-glass {
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-btn-glass:hover {
+    background: rgba(15, 23, 42, 0.15);
+}
+
+.gsp2-light-mode .gsp2-btn-glass .iconify {
+    color: var(--gsp2-text-primary);
+}
+
+/* ===== Light Mode Footer ===== */
+.gsp2-light-mode .gsp2-footer {
+    background: var(--gsp2-bg-secondary);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-footer-brand p {
+    color: var(--gsp2-text-secondary);
+}
+
+.gsp2-light-mode .gsp2-footer-brand .gsp2-footer-license {
+    color: var(--gsp2-text-muted);
+}
+
+.gsp2-light-mode .gsp2-footer-title {
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-footer-links a {
+    color: var(--gsp2-text-secondary);
+}
+
+.gsp2-light-mode .gsp2-footer-links a:hover {
+    color: var(--gsp2-primary);
+}
+
+.gsp2-light-mode .gsp2-footer-bottom {
+    border-color: var(--gsp2-border);
+    color: var(--gsp2-text-muted);
+}
+
+.gsp2-light-mode .gsp2-language-select {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: var(--gsp2-border);
+    color: var(--gsp2-text-primary);
+}
+
+/* ===== Light Mode Mobile Menu ===== */
+.gsp2-light-mode .gsp2-mobile-menu {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: var(--gsp2-border);
+}
+
+.gsp2-light-mode .gsp2-mobile-menu-close {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-mobile-menu-list a {
+    color: var(--gsp2-text-secondary);
+}
+
+.gsp2-light-mode .gsp2-mobile-menu-list a:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--gsp2-text-primary);
+}
+
+/* ===== Light Mode Hero Section ===== */
+.gsp2-light-mode .gsp2-hero {
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.gsp2-light-mode .gsp2-hero-grid {
+    background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+}
+
+.gsp2-light-mode .gsp2-hero-circle {
+    border-color: rgba(59, 130, 246, 0.1);
+}
+
+.gsp2-light-mode .gsp2-hero-title {
+    color: var(--gsp2-text-primary);
+}
+
+.gsp2-light-mode .gsp2-hero-subtitle {
+    color: var(--gsp2-text-secondary);
+}
+
+.gsp2-light-mode .gsp2-hero-btn-primary {
+    background: var(--gsp2-primary);
+    color: #ffffff;
+}
+
+.gsp2-light-mode .gsp2-hero-btn-secondary {
+    color: var(--gsp2-text-secondary);
+}
+
+.gsp2-light-mode .gsp2-hero-btn-secondary:hover {
+    color: var(--gsp2-text-primary);
+}
+
+/* ===== Light Mode Pay Online Section ===== */
+.gsp2-light-mode .gsp2-pay-online-wrapper {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+}
+
+/* ===== Light Mode Section Headings (BRUTAL FIX) ===== */
+.gsp2-light-mode .gsp2-h2,
+.gsp2-light-mode .gsp2-how-works-header h2,
+.gsp2-light-mode .gsp2-crypto-header h2,
+.gsp2-light-mode .gsp2-section-title,
+.gsp2-light-mode h2 {
+    color: #1e40af !important;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+/* ===== Light Mode Trust Cards ===== */
+.gsp2-light-mode .gsp2-trust {
+    background: transparent;
+}
+
+.gsp2-light-mode .gsp2-trust-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.gsp2-light-mode .gsp2-crypto-section {
+    background: transparent;
+}
+
+.gsp2-light-mode .gsp2-crypto-table-wrapper {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Transition for Theme Switch ===== */
+.gsp2-theme,
+.gsp2-theme * {
+    transition: background-color var(--gsp2-transition-normal),
+                color var(--gsp2-transition-normal),
+                border-color var(--gsp2-transition-normal);
+}
+
+/* Disable transition for specific elements */
+.gsp2-theme .gsp2-btn,
+.gsp2-theme .gsp2-nav-link,
+.gsp2-theme a {
+    transition: all var(--gsp2-transition-fast);
+}
+
+/* ===== Upgrade Page Dark Mode ===== */
+.gsp2-dark-mode .gsp2-upgrade-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.gsp2-dark-mode .gsp2-upgrade-badge {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.gsp2-dark-mode .gsp2-smart-form label {
+    color: #f1f5f9;
+}
+
+.gsp2-dark-mode .gsp2-input-wrapper input,
+.gsp2-dark-mode .gsp2-input-wrapper select {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+}
+
+.gsp2-dark-mode .gsp2-input-wrapper input::placeholder {
+    color: #64748b;
+}
+
+.gsp2-dark-mode .gsp2-input-wrapper .gsp2-input-icon {
+    color: #64748b;
+}
+
+.gsp2-dark-mode .gsp2-upgrade-form-header p {
+    color: #94a3b8;
+}
+
+.gsp2-dark-mode .gsp2-checkbox-wrapper {
+    color: #f1f5f9;
+}
+
+.gsp2-dark-mode .gsp2-input-hint {
+    color: #64748b;
+}

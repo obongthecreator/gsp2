@@ -1,0 +1,87 @@
+/**
+ * GlobalSwiftPay2 - Admin Stylesheet
+ */
+
+.gsp2-admin-wrap {
+    max-width: 800px;
+}
+
+.gsp2-admin-wrap h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.gsp2-admin-wrap .form-table th {
+    width: 200px;
+    padding: 15px 10px 15px 0;
+}
+
+.gsp2-admin-wrap .form-table td {
+    padding: 15px 0;
+}
+
+.gsp2-admin-wrap .regular-text {
+    width: 100%;
+    max-width: 400px;
+}
+
+.gsp2-admin-wrap .large-text {
+    width: 100%;
+    max-width: 600px;
+}
+
+.gsp2-image-upload-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gsp2-image-preview {
+    margin-bottom: 5px;
+}
+
+.gsp2-image-preview img {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.gsp2-admin-wrap .button {
+    margin-right: 5px;
+}
+
+.gsp2-admin-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.gsp2-admin-card h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.gsp2-shortcode-list {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.gsp2-shortcode-list code {
+    display: block;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    font-family: monospace;
+}
+
+.gsp2-shortcode-list code:last-child {
+    margin-bottom: 0;
+}
