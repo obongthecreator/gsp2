@@ -24,6 +24,7 @@ class GSP2_Shortcodes {
         add_shortcode('gsp2_upgrade', array($this, 'render_upgrade'));
         add_shortcode('gsp2_login', array($this, 'render_login'));
         add_shortcode('gsp2_admin_panel', array($this, 'render_admin_panel'));
+        add_shortcode('gsp2_forgot_password', array($this, 'render_forgot_password'));
     }
     
     public function render_homepage($atts) {
@@ -112,6 +113,12 @@ class GSP2_Shortcodes {
     public function render_admin_panel($atts) {
         ob_start();
         include GSP2_PLUGIN_DIR . 'templates/pages/admin-panel.php';
+        return ob_get_clean();
+    }
+    
+    public function render_forgot_password($atts) {
+        ob_start();
+        include GSP2_PLUGIN_DIR . 'templates/pages/forgot-password.php';
         return ob_get_clean();
     }
 }

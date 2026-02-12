@@ -53,6 +53,7 @@ A professional investment website plugin for WordPress with dark mode, glassmorp
 - `[gsp2_footer]` - Footer section
 - `[gsp2_navigation]` - Navigation bar
 - `[gsp2_dark_mode_toggle]` - Dark mode toggle button
+- `[gsp2_forgot_password]` - Forgot password form
 
 ## Custom Pages
 
@@ -62,6 +63,7 @@ The plugin creates the following custom pages:
 - `/gsp2-security-policy/` - Security Policy page
 - `/gsp2-privacy-policy/` - Privacy Policy page
 - `/gsp2-terms/` - Terms and Conditions page
+- `/gsp2-forgot-password/` - Forgot Password page
 
 ## Configuration
 

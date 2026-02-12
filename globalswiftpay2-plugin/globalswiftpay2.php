@@ -137,6 +137,7 @@ class GlobalSwiftPay2 {
         add_rewrite_rule('^gsp2-login/?$', 'index.php?gsp2_page=login', 'top');
         add_rewrite_rule('^gsp2-admin-panel/?$', 'index.php?gsp2_page=admin-panel', 'top');
         add_rewrite_rule('^gsp2-balance-manager/?$', 'index.php?gsp2_page=balance-manager', 'top');
+        add_rewrite_rule('^gsp2-forgot-password/?$', 'index.php?gsp2_page=forgot-password', 'top');
         
         add_filter('query_vars', function($vars) {
             $vars[] = 'gsp2_page';

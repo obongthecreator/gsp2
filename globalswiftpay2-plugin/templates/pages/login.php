@@ -145,7 +145,7 @@ $settings = get_option('gsp2_settings', array());
                                     <span class="gsp2-checkbox-custom"></span>
                                     <span>Remember me</span>
                                 </label>
-                                <a href="<?php echo esc_url(wp_lostpassword_url()); ?>" class="gsp2-forgot-link">Forgot Password?</a>
+                                <a href="<?php echo esc_url(home_url('/gsp2-forgot-password/')); ?>" class="gsp2-forgot-link">Forgot Password?</a>
                             </div>
                             
                             <button type="submit" class="gsp2-btn gsp2-btn-primary gsp2-btn-block">
