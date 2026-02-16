@@ -196,8 +196,8 @@ class GSP_Email {
         
         if ($type === 'sender') {
             $message = $status === 'approved'
-                ? 'Your transfer has been completed successfully. The amount has been deducted from your wallet.'
-                : 'Unfortunately, your transfer request could not be processed at this time. Please contact support for more information.';
+                ? 'Your transfer has been approved and done.'
+                : 'The PIN code you enter is invalid and not linked to this account kindly message the support chat for Assistance.';
         } else {
             $message = 'You have received a transfer! The amount has been credited to your wallet.';
         }
