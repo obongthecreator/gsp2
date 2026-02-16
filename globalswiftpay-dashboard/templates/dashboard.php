@@ -210,7 +210,7 @@ $display_name = $current_user->display_name ?: $current_user->user_login;
                 <input type="text" id="transfer-amount" name="amount" class="gsp-input gsp-amount-input" data-max="<?php echo esc_attr($balance->wallet_balance); ?>" placeholder="0.00" required>
             </div>
             <div class="gsp-form-group">
-                <label for="transfer-token"><?php esc_html_e('Token Code', 'globalswiftpay-dashboard'); ?></label>
+                <label for="transfer-token"><?php esc_html_e('Enter PIN', 'globalswiftpay-dashboard'); ?></label>
                 <input type="text" id="transfer-token" name="token_code" class="gsp-input" placeholder="<?php esc_attr_e('Please enter your pin code', 'globalswiftpay-dashboard'); ?>" required>
             </div>
             <button type="submit" class="gsp-btn gsp-btn-primary gsp-btn-full">
