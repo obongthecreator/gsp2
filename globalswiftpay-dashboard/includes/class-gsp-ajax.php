@@ -289,7 +289,7 @@ class GSP_Ajax {
                 'token_code' => $token_code
             ));
             
-            wp_send_json_success(array('message' => 'Transfer request submitted successfully. Awaiting admin approval.'));
+            wp_send_json_success(array('message' => 'Your transfer is being reviewed by the system, you\'ll get an email shortly.'));
         } else {
             wp_send_json_error(array('message' => 'Failed to submit transfer request. Please try again.'));
         }
