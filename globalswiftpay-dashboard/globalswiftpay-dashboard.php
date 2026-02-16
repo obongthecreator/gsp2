@@ -248,9 +248,18 @@ class GlobalSwiftPay_Dashboard {
     }
     
     public function redirect_after_logout() {
-        // Get logout redirect URL from settings, with fallback to login page
-        $logout_url = GSP_Database::get_setting('logout_redirect_url');
-        if (empty($logout_url)) {
+        // Check if a redirect_to was specified in the logout URL
+        $redirect_to = isset($_REQUEST['redirect_to']) ? $_REQUEST['redirect_to'] : '';
+        
+        if (!empty($redirect_to)) {
+            // Use the redirect_to parameter that was passed (e.g. from wp_logout_url())
+            $logout_url = esc_url_raw($redirect_to);
+        } else {
+            // Fall back to the configured logout redirect URL
+            $logout_url = GSP_Database::get_setting('logout_redirect_url');
+        }
+        
+        if (empty($logout_url) || $logout_url === '/gsp2-login/') {
             $logout_url = home_url('/gsp2-login/');
         }
         

@@ -70,7 +70,7 @@ $register_link = get_option('gsp2_register_link', $register_url ? $register_url 
             </button>
             
             <?php if ($is_logged_in): ?>
-                <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>" class="gsp2-btn gsp2-btn-sm gsp2-btn-glass">
+                <a href="<?php echo esc_url(wp_logout_url(home_url('/gsp2-login/'))); ?>" class="gsp2-btn gsp2-btn-sm gsp2-btn-glass">
                     <span class="iconify" data-icon="solar:logout-linear"></span>
                     Logout
                 </a>
@@ -134,7 +134,7 @@ $register_link = get_option('gsp2_register_link', $register_url ? $register_url 
         </li>
         <li>
             <?php if ($is_logged_in): ?>
-                <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>">
+                <a href="<?php echo esc_url(wp_logout_url(home_url('/gsp2-login/'))); ?>">
                     <span class="iconify" data-icon="solar:logout-linear"></span>
                     Logout
                 </a>

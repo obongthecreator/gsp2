@@ -58,7 +58,7 @@ $hero_image = get_option('gsp2_hero_image', '');
                     <span class="iconify gsp2-beam-animate" data-icon="solar:chart-square-linear"></span>
                     Dashboard
                 </a>
-                <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>" class="gsp2-btn gsp2-hero-btn gsp2-hero-btn-secondary">
+                <a href="<?php echo esc_url(wp_logout_url(home_url('/gsp2-login/'))); ?>" class="gsp2-btn gsp2-hero-btn gsp2-hero-btn-secondary">
                     <span class="iconify gsp2-beam-animate" data-icon="solar:logout-linear"></span>
                     Logout
                 </a>

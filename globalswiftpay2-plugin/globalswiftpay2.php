@@ -107,7 +107,7 @@ class GlobalSwiftPay2 {
             'is_logged_in' => is_user_logged_in(),
             'btc_address' => get_option('gsp2_btc_address'),
             'dashboard_link' => get_option('gsp2_dashboard_link'),
-            'logout_url' => wp_logout_url(home_url())
+            'logout_url' => wp_logout_url(home_url('/gsp2-login/'))
         ));
     }
     
