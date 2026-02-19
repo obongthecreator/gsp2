@@ -231,7 +231,7 @@ class GlobalSwiftPay_Dashboard {
     }
     
     /**
-     * Render frontend admin dashboard shortcode
+     * Render frontend admin dashboard shortcode - redirects to WP Admin
      */
     public function render_admin_frontend_shortcode($atts) {
         if (!is_user_logged_in()) {
@@ -242,9 +242,9 @@ class GlobalSwiftPay_Dashboard {
             return '<div class="gsp-access-denied"><p>' . __('You do not have permission to access this page.', 'globalswiftpay-dashboard') . '</p></div>';
         }
         
-        ob_start();
-        include GSP_PLUGIN_DIR . 'templates/admin-frontend.php';
-        return ob_get_clean();
+        // Redirect to WordPress admin area
+        wp_redirect(admin_url('admin.php?page=globalswiftpay'));
+        exit;
     }
     
     public function redirect_after_logout() {

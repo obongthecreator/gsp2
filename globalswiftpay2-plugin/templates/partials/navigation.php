@@ -45,7 +45,7 @@ $register_link = get_option('gsp2_register_link', $register_url ? $register_url 
             <?php endif; ?>
             <?php if ($is_admin): ?>
             <li>
-                <a href="<?php echo esc_url(home_url('/gsp2-admin-panel/')); ?>" class="gsp2-nav-link">
+                <a href="<?php echo esc_url(admin_url()); ?>" class="gsp2-nav-link">
                     <span class="iconify" data-icon="solar:settings-linear"></span>
                     Admin Panel
                 </a>
@@ -120,7 +120,7 @@ $register_link = get_option('gsp2_register_link', $register_url ? $register_url 
         <?php endif; ?>
         <?php if ($is_admin): ?>
         <li>
-            <a href="<?php echo esc_url(home_url('/gsp2-admin-panel/')); ?>">
+            <a href="<?php echo esc_url(admin_url()); ?>">
                 <span class="iconify" data-icon="solar:settings-linear"></span>
                 Admin Panel
             </a>

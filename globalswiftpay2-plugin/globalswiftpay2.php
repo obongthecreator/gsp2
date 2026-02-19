@@ -150,6 +150,15 @@ class GlobalSwiftPay2 {
     public function handle_custom_pages() {
         $page = get_query_var('gsp2_page');
         if ($page) {
+            // Redirect admin panel and balance manager to WordPress admin
+            if ($page === 'admin-panel' || $page === 'balance-manager') {
+                if (current_user_can('manage_options')) {
+                    wp_redirect(admin_url('admin.php?page=globalswiftpay'));
+                } else {
+                    wp_redirect(home_url('/gsp2-login/'));
+                }
+                exit;
+            }
             $template = GSP2_PLUGIN_DIR . 'templates/pages/' . $page . '.php';
             if (file_exists($template)) {
                 include $template;

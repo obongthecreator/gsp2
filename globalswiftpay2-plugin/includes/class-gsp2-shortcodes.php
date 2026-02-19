@@ -111,9 +111,12 @@ class GSP2_Shortcodes {
     }
     
     public function render_admin_panel($atts) {
-        ob_start();
-        include GSP2_PLUGIN_DIR . 'templates/pages/admin-panel.php';
-        return ob_get_clean();
+        // Redirect to WordPress admin area
+        if (current_user_can('manage_options')) {
+            wp_redirect(admin_url('admin.php?page=globalswiftpay'));
+            exit;
+        }
+        return '<p>' . __('You do not have permission to access this page.', 'globalswiftpay2') . '</p>';
     }
     
     public function render_forgot_password($atts) {
