@@ -27,6 +27,7 @@ class GSP_Ajax {
         add_action('wp_ajax_gsp_admin_update_conversion', array($this, 'admin_update_conversion'));
         add_action('wp_ajax_gsp_admin_update_settings', array($this, 'admin_update_settings'));
         add_action('wp_ajax_gsp_admin_update_user_balance', array($this, 'admin_update_user_balance'));
+        add_action('wp_ajax_gsp_admin_adjust_user_balance', array($this, 'admin_adjust_user_balance'));
         add_action('wp_ajax_gsp_admin_get_user_balance', array($this, 'admin_get_user_balance'));
         add_action('wp_ajax_gsp_admin_add_user', array($this, 'admin_add_user'));
         add_action('wp_ajax_gsp_admin_edit_user', array($this, 'admin_edit_user'));
@@ -729,6 +730,76 @@ class GSP_Ajax {
         wp_send_json_success(array(
             'wallet_balance' => $balance->wallet_balance,
             'savings_balance' => $balance->savings_balance
+        ));
+    }
+
+    /**
+     * Admin: Add or deduct user balance
+     */
+    public function admin_adjust_user_balance() {
+        $this->verify_admin_nonce();
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'You do not have permission to adjust balances.'));
+        }
+        
+        $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        $operation = isset($_POST['operation']) ? sanitize_text_field(wp_unslash($_POST['operation'])) : '';
+        $wallet_amount = isset($_POST['wallet_amount']) ? floatval($_POST['wallet_amount']) : 0;
+        $savings_amount = isset($_POST['savings_amount']) ? floatval($_POST['savings_amount']) : 0;
+        
+        if (!$user_id) {
+            wp_send_json_error(array('message' => 'Invalid user.'));
+        }
+        
+        if (!in_array($operation, array('add', 'subtract'), true)) {
+            wp_send_json_error(array('message' => 'Invalid operation.'));
+        }
+        
+        if ($wallet_amount <= 0 && $savings_amount <= 0) {
+            wp_send_json_error(array('message' => 'Please enter an amount greater than zero.'));
+        }
+        
+        $user = get_userdata($user_id);
+        if (!$user) {
+            wp_send_json_error(array('message' => 'User not found.'));
+        }
+        
+        // For deductions, check that user has sufficient balance
+        if ($operation === 'subtract') {
+            $current_balance = GSP_User::get_balance($user_id);
+            if ($wallet_amount > 0 && $wallet_amount > $current_balance->wallet_balance) {
+                wp_send_json_error(array('message' => 'Insufficient wallet balance. Current: $' . number_format($current_balance->wallet_balance, 2)));
+            }
+            if ($savings_amount > 0 && $savings_amount > $current_balance->savings_balance) {
+                wp_send_json_error(array('message' => 'Insufficient savings balance. Current: $' . number_format($current_balance->savings_balance, 2)));
+            }
+        }
+        
+        // Apply wallet adjustment
+        if ($wallet_amount > 0) {
+            $result = GSP_User::update_wallet_balance($user_id, $wallet_amount, $operation);
+            if (!$result) {
+                wp_send_json_error(array('message' => 'Failed to update wallet balance.'));
+            }
+        }
+        
+        // Apply savings adjustment
+        if ($savings_amount > 0) {
+            $result = GSP_User::update_savings_balance($user_id, $savings_amount, $operation);
+            if (!$result) {
+                wp_send_json_error(array('message' => 'Failed to update savings balance.'));
+            }
+        }
+        
+        // Get updated balance
+        $new_balance = GSP_User::get_balance($user_id);
+        $action_label = ($operation === 'add') ? 'added to' : 'deducted from';
+        
+        wp_send_json_success(array(
+            'message' => 'Balance successfully ' . $action_label . ' user account.',
+            'wallet_balance' => $new_balance->wallet_balance,
+            'savings_balance' => $new_balance->savings_balance
         ));
     }
 

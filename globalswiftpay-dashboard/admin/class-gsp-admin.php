@@ -557,6 +557,8 @@ class GSP_Admin {
                                 <td class="gsp-user-savings-balance">$<?php echo esc_html(number_format($balance->savings_balance, 2)); ?></td>
                                 <td class="gsp-user-actions-cell">
                                     <div class="gsp-user-actions">
+                                        <button class="gsp-admin-btn gsp-btn-approve gsp-btn-add-balance" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>"><?php esc_html_e('Add Balance', 'globalswiftpay-dashboard'); ?></button>
+                                        <button class="gsp-admin-btn gsp-btn-decline gsp-btn-deduct-balance" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>" data-balance="<?php echo esc_attr($balance->wallet_balance); ?>" data-savings="<?php echo esc_attr($balance->savings_balance); ?>"><?php esc_html_e('Deduct Balance', 'globalswiftpay-dashboard'); ?></button>
                                         <button class="gsp-admin-btn gsp-btn-edit-balance" data-user-id="<?php echo esc_attr($user->ID); ?>" data-balance="<?php echo esc_attr($balance->wallet_balance); ?>" data-savings="<?php echo esc_attr($balance->savings_balance); ?>"><?php esc_html_e('Edit Balance', 'globalswiftpay-dashboard'); ?></button>
                                         <button class="gsp-admin-btn gsp-btn-save gsp-btn-edit-user" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>" data-email="<?php echo esc_attr($user->user_email); ?>" data-display-name="<?php echo esc_attr($user->display_name); ?>"><?php esc_html_e('Edit User', 'globalswiftpay-dashboard'); ?></button>
                                         <?php if ($user->ID !== get_current_user_id()): ?>
@@ -640,6 +642,50 @@ class GSP_Admin {
                         <input type="number" id="edit-savings-amount" name="savings_balance" step="0.01" min="0" value="0">
                     </div>
                     <button type="submit" class="gsp-admin-btn gsp-btn-save"><?php esc_html_e('Save Balance', 'globalswiftpay-dashboard'); ?></button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Add Balance Modal -->
+        <div id="gsp-add-balance-modal" class="gsp-modal" style="display: none;">
+            <div class="gsp-modal-content">
+                <span class="gsp-modal-close">&times;</span>
+                <h2><?php esc_html_e('Add Balance', 'globalswiftpay-dashboard'); ?></h2>
+                <p id="gsp-add-balance-username" style="color: #666; margin-bottom: 15px;"></p>
+                <form id="gsp-add-balance-form">
+                    <input type="hidden" id="add-balance-user-id" name="user_id" value="">
+                    <div class="gsp-form-group">
+                        <label for="add-balance-wallet-amount"><?php esc_html_e('Amount to Add to Wallet ($)', 'globalswiftpay-dashboard'); ?></label>
+                        <input type="number" id="add-balance-wallet-amount" name="wallet_amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="gsp-form-group">
+                        <label for="add-balance-savings-amount"><?php esc_html_e('Amount to Add to Savings ($)', 'globalswiftpay-dashboard'); ?></label>
+                        <input type="number" id="add-balance-savings-amount" name="savings_amount" step="0.01" min="0" value="0">
+                    </div>
+                    <button type="submit" class="gsp-admin-btn gsp-btn-approve"><?php esc_html_e('Add Balance', 'globalswiftpay-dashboard'); ?></button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Deduct Balance Modal -->
+        <div id="gsp-deduct-balance-modal" class="gsp-modal" style="display: none;">
+            <div class="gsp-modal-content">
+                <span class="gsp-modal-close">&times;</span>
+                <h2><?php esc_html_e('Deduct Balance', 'globalswiftpay-dashboard'); ?></h2>
+                <p id="gsp-deduct-balance-username" style="color: #666; margin-bottom: 15px;"></p>
+                <form id="gsp-deduct-balance-form">
+                    <input type="hidden" id="deduct-balance-user-id" name="user_id" value="">
+                    <div class="gsp-form-group">
+                        <label for="deduct-balance-wallet-amount"><?php esc_html_e('Amount to Deduct from Wallet ($)', 'globalswiftpay-dashboard'); ?></label>
+                        <input type="number" id="deduct-balance-wallet-amount" name="wallet_amount" step="0.01" min="0" required>
+                        <p class="gsp-settings-description" id="deduct-wallet-max" style="margin-top: 4px;"></p>
+                    </div>
+                    <div class="gsp-form-group">
+                        <label for="deduct-balance-savings-amount"><?php esc_html_e('Amount to Deduct from Savings ($)', 'globalswiftpay-dashboard'); ?></label>
+                        <input type="number" id="deduct-balance-savings-amount" name="savings_amount" step="0.01" min="0" value="0">
+                        <p class="gsp-settings-description" id="deduct-savings-max" style="margin-top: 4px;"></p>
+                    </div>
+                    <button type="submit" class="gsp-admin-btn gsp-btn-decline"><?php esc_html_e('Deduct Balance', 'globalswiftpay-dashboard'); ?></button>
                 </form>
             </div>
         </div>

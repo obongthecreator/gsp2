@@ -43,6 +43,48 @@
                 AdminActions.updateUserBalance($(this));
             });
             
+            // Add balance button
+            $(document).on('click', '.gsp-btn-add-balance', function() {
+                const userId = $(this).data('user-id');
+                const username = $(this).data('username');
+                
+                $('#add-balance-user-id').val(userId);
+                $('#add-balance-wallet-amount').val('');
+                $('#add-balance-savings-amount').val('');
+                $('#gsp-add-balance-username').text('User: ' + username);
+                $('#gsp-add-balance-modal').addClass('active').show();
+            });
+            
+            // Add balance form
+            $('#gsp-add-balance-form').on('submit', function(e) {
+                e.preventDefault();
+                AdminActions.adjustUserBalance($(this), 'add');
+            });
+            
+            // Deduct balance button
+            $(document).on('click', '.gsp-btn-deduct-balance', function() {
+                const userId = $(this).data('user-id');
+                const username = $(this).data('username');
+                const walletBalance = parseFloat($(this).data('balance')) || 0;
+                const savingsBalance = parseFloat($(this).data('savings')) || 0;
+                
+                $('#deduct-balance-user-id').val(userId);
+                $('#deduct-balance-wallet-amount').val('');
+                $('#deduct-balance-savings-amount').val('');
+                $('#gsp-deduct-balance-username').text('User: ' + username);
+                $('#deduct-wallet-max').text('Available: $' + walletBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                $('#deduct-savings-max').text('Available: $' + savingsBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                $('#deduct-balance-wallet-amount').attr('max', walletBalance);
+                $('#deduct-balance-savings-amount').attr('max', savingsBalance);
+                $('#gsp-deduct-balance-modal').addClass('active').show();
+            });
+            
+            // Deduct balance form
+            $('#gsp-deduct-balance-form').on('submit', function(e) {
+                e.preventDefault();
+                AdminActions.adjustUserBalance($(this), 'subtract');
+            });
+            
             // Edit user button
             $(document).on('click', '.gsp-btn-edit-user', function() {
                 const userId = $(this).data('user-id');
@@ -227,6 +269,56 @@
                 },
                 error: function() {
                     $btn.prop('disabled', false).text('Save Balance');
+                    AdminActions.showNotification(AdminActions.errorMessage, 'error');
+                }
+            });
+        },
+        
+        adjustUserBalance: function($form, operation) {
+            const $btn = $form.find('button[type="submit"]');
+            const originalText = $btn.text();
+            $btn.prop('disabled', true).text('Processing...');
+            
+            const userId = $form.find('input[name="user_id"]').val();
+            const walletAmount = parseFloat($form.find('input[name="wallet_amount"]').val()) || 0;
+            const savingsAmount = parseFloat($form.find('input[name="savings_amount"]').val()) || 0;
+            
+            $.ajax({
+                url: gsp_admin_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'gsp_admin_adjust_user_balance',
+                    nonce: gsp_admin_ajax.nonce,
+                    user_id: userId,
+                    operation: operation,
+                    wallet_amount: walletAmount,
+                    savings_amount: savingsAmount
+                },
+                success: function(response) {
+                    $btn.prop('disabled', false).text(originalText);
+                    
+                    if (response.success) {
+                        // Update the table with new balances
+                        const $row = $('tr[data-user-id="' + userId + '"]');
+                        const newWallet = parseFloat(response.data.wallet_balance);
+                        const newSavings = parseFloat(response.data.savings_balance);
+                        
+                        $row.find('.gsp-user-wallet-balance').text('$' + newWallet.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                        $row.find('.gsp-user-savings-balance').text('$' + newSavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                        
+                        // Update data attributes on buttons
+                        $row.find('.gsp-btn-edit-balance').data('balance', newWallet).data('savings', newSavings);
+                        $row.find('.gsp-btn-deduct-balance').data('balance', newWallet).data('savings', newSavings);
+                        
+                        // Close modal
+                        $form.closest('.gsp-modal').removeClass('active').hide();
+                        AdminActions.showNotification(response.data.message, 'success');
+                    } else {
+                        AdminActions.showNotification(response.data.message, 'error');
+                    }
+                },
+                error: function() {
+                    $btn.prop('disabled', false).text(originalText);
                     AdminActions.showNotification(AdminActions.errorMessage, 'error');
                 }
             });
