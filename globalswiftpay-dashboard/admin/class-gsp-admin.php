@@ -545,6 +545,9 @@ class GSP_Admin {
                             <th><?php esc_html_e('Username', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Email', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Display Name', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Phone', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Country', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('GSP Account', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Wallet Balance', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Savings Balance', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Actions', 'globalswiftpay-dashboard'); ?></th>
@@ -553,16 +556,24 @@ class GSP_Admin {
                     <tbody>
                         <?php if (empty($users)): ?>
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 20px;"><?php esc_html_e('No users found matching your criteria.', 'globalswiftpay-dashboard'); ?></td>
+                            <td colspan="10" style="text-align: center; padding: 20px;"><?php esc_html_e('No users found matching your criteria.', 'globalswiftpay-dashboard'); ?></td>
                         </tr>
                         <?php else: ?>
                         <?php foreach ($users as $user): ?>
-                            <?php $balance = GSP_User::get_balance($user->ID); ?>
+                            <?php 
+                            $balance = GSP_User::get_balance($user->ID);
+                            $user_phone = get_user_meta($user->ID, 'gsp_mobile', true);
+                            $user_country = get_user_meta($user->ID, 'gsp_country', true);
+                            $user_account = get_user_meta($user->ID, 'gsp_account_number', true);
+                            ?>
                             <tr data-user-id="<?php echo esc_attr($user->ID); ?>">
                                 <td><?php echo esc_html($user->ID); ?></td>
                                 <td class="gsp-user-login"><a href="<?php echo esc_url(admin_url('admin.php?page=globalswiftpay-user-detail&user_id=' . $user->ID)); ?>"><?php echo esc_html($user->user_login); ?></a></td>
                                 <td class="gsp-user-email"><?php echo esc_html($user->user_email); ?></td>
                                 <td class="gsp-user-display-name"><?php echo esc_html($user->display_name); ?></td>
+                                <td><?php echo $user_phone ? esc_html($user_phone) : '<span style="color: #a0aec0;">—</span>'; ?></td>
+                                <td><?php echo $user_country ? esc_html($user_country) : '<span style="color: #a0aec0;">—</span>'; ?></td>
+                                <td><?php echo $user_account ? esc_html($user_account) : '<span style="color: #a0aec0;">—</span>'; ?></td>
                                 <td class="gsp-user-wallet-balance">$<?php echo esc_html(number_format($balance->wallet_balance, 2)); ?></td>
                                 <td class="gsp-user-savings-balance">$<?php echo esc_html(number_format($balance->savings_balance, 2)); ?></td>
                                 <td class="gsp-user-actions-cell">
@@ -919,6 +930,12 @@ class GSP_Admin {
         
         $balance = GSP_User::get_balance($user_id);
         
+        // Get user registration meta (from upgrade form / Registration Magic)
+        $user_phone = get_user_meta($user_id, 'gsp_mobile', true);
+        $user_country = get_user_meta($user_id, 'gsp_country', true);
+        $user_account = get_user_meta($user_id, 'gsp_account_number', true);
+        $user_tier2_approved = get_user_meta($user_id, 'gsp_tier2_approved', true);
+        
         // Get user's deposits, withdrawals, transfers
         global $wpdb;
         $deposits_table = $wpdb->prefix . 'gsp_deposits';
@@ -982,6 +999,26 @@ class GSP_Admin {
                             <?php esc_html_e('Roles:', 'globalswiftpay-dashboard'); ?> <?php echo esc_html(implode(', ', $user->roles)); ?> &bull;
                             <?php esc_html_e('Registered:', 'globalswiftpay-dashboard'); ?> <?php echo esc_html(date('M j, Y', strtotime($user->user_registered))); ?>
                         </p>
+                        <?php if ($user_phone || $user_country || $user_account): ?>
+                        <p style="margin: 8px 0 0; color: #4a5568; font-size: 13px;">
+                            <?php if ($user_phone): ?>
+                                <strong><?php esc_html_e('Phone:', 'globalswiftpay-dashboard'); ?></strong> <?php echo esc_html($user_phone); ?>
+                            <?php endif; ?>
+                            <?php if ($user_phone && $user_country): ?> &bull; <?php endif; ?>
+                            <?php if ($user_country): ?>
+                                <strong><?php esc_html_e('Country:', 'globalswiftpay-dashboard'); ?></strong> <?php echo esc_html($user_country); ?>
+                            <?php endif; ?>
+                            <?php if (($user_phone || $user_country) && $user_account): ?> &bull; <?php endif; ?>
+                            <?php if ($user_account): ?>
+                                <strong><?php esc_html_e('GSP Account:', 'globalswiftpay-dashboard'); ?></strong> <?php echo esc_html($user_account); ?>
+                            <?php endif; ?>
+                        </p>
+                        <?php endif; ?>
+                        <?php if ($user_tier2_approved): ?>
+                        <p style="margin: 4px 0 0; color: #38a169; font-size: 12px;">
+                            <strong><?php esc_html_e('Tier 2 Approved:', 'globalswiftpay-dashboard'); ?></strong> <?php echo esc_html(date('M j, Y g:i A', strtotime($user_tier2_approved))); ?>
+                        </p>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
