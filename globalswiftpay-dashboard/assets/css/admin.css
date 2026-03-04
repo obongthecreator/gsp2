@@ -189,6 +189,23 @@
     font-size: 12px;
 }
 
+.gsp-user-login a {
+    color: #0096ff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.gsp-user-login a:hover {
+    color: #0077cc;
+    text-decoration: underline;
+}
+
+.gsp-admin-no-data {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+}
+
 .gsp-admin-table th {
     background: #f8fafc;
     padding: 16px 20px;

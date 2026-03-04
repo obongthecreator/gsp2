@@ -97,6 +97,16 @@ class GSP_Admin {
             'globalswiftpay-migration',
             array($this, 'render_migration_page')
         );
+
+        // User detail page (hidden from menu)
+        add_submenu_page(
+            null,
+            __('User Details', 'globalswiftpay-dashboard'),
+            __('User Details', 'globalswiftpay-dashboard'),
+            'manage_options',
+            'globalswiftpay-user-detail',
+            array($this, 'render_user_detail_page')
+        );
     }
     
     /**
@@ -550,7 +560,7 @@ class GSP_Admin {
                             <?php $balance = GSP_User::get_balance($user->ID); ?>
                             <tr data-user-id="<?php echo esc_attr($user->ID); ?>">
                                 <td><?php echo esc_html($user->ID); ?></td>
-                                <td class="gsp-user-login"><?php echo esc_html($user->user_login); ?></td>
+                                <td class="gsp-user-login"><a href="<?php echo esc_url(admin_url('admin.php?page=globalswiftpay-user-detail&user_id=' . $user->ID)); ?>"><?php echo esc_html($user->user_login); ?></a></td>
                                 <td class="gsp-user-email"><?php echo esc_html($user->user_email); ?></td>
                                 <td class="gsp-user-display-name"><?php echo esc_html($user->display_name); ?></td>
                                 <td class="gsp-user-wallet-balance">$<?php echo esc_html(number_format($balance->wallet_balance, 2)); ?></td>
@@ -885,6 +895,237 @@ class GSP_Admin {
                     <h3><?php esc_html_e('Import Results', 'globalswiftpay-dashboard'); ?></h3>
                     <div id="gsp-csv-import-message"></div>
                 </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render user detail page
+     */
+    public function render_user_detail_page() {
+        $user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+        
+        if (!$user_id) {
+            echo '<div class="wrap"><p>' . esc_html__('Invalid user ID.', 'globalswiftpay-dashboard') . '</p></div>';
+            return;
+        }
+        
+        $user = get_userdata($user_id);
+        if (!$user) {
+            echo '<div class="wrap"><p>' . esc_html__('User not found.', 'globalswiftpay-dashboard') . '</p></div>';
+            return;
+        }
+        
+        $balance = GSP_User::get_balance($user_id);
+        
+        // Get user's deposits, withdrawals, transfers
+        global $wpdb;
+        $deposits_table = $wpdb->prefix . 'gsp_deposits';
+        $withdrawals_table = $wpdb->prefix . 'gsp_withdrawals';
+        $transfers_table = $wpdb->prefix . 'gsp_transfers';
+        
+        // Suppress errors if tables don't exist yet
+        $wpdb->suppress_errors(true);
+        
+        $deposits = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM {$deposits_table} WHERE user_id = %d ORDER BY created_at DESC LIMIT 10",
+            $user_id
+        ));
+        
+        $withdrawals = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM {$withdrawals_table} WHERE user_id = %d ORDER BY created_at DESC LIMIT 10",
+            $user_id
+        ));
+        
+        $transfers_sent = $wpdb->get_results($wpdb->prepare(
+            "SELECT t.*, u.display_name as to_name FROM {$transfers_table} t LEFT JOIN {$wpdb->users} u ON t.to_user_id = u.ID WHERE t.from_user_id = %d ORDER BY t.created_at DESC LIMIT 10",
+            $user_id
+        ));
+        
+        $transfers_received = $wpdb->get_results($wpdb->prepare(
+            "SELECT t.*, u.display_name as from_name FROM {$transfers_table} t LEFT JOIN {$wpdb->users} u ON t.from_user_id = u.ID WHERE t.to_user_id = %d ORDER BY t.created_at DESC LIMIT 10",
+            $user_id
+        ));
+        
+        $wpdb->suppress_errors(false);
+        
+        // Ensure arrays if queries failed
+        if (!is_array($deposits)) $deposits = array();
+        if (!is_array($withdrawals)) $withdrawals = array();
+        if (!is_array($transfers_sent)) $transfers_sent = array();
+        if (!is_array($transfers_received)) $transfers_received = array();
+        
+        $back_url = admin_url('admin.php?page=globalswiftpay-users');
+        ?>
+        <div class="wrap gsp-admin-wrap">
+            <div style="margin-bottom: 20px;">
+                <a href="<?php echo esc_url($back_url); ?>" class="gsp-admin-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                    <span class="dashicons dashicons-arrow-left-alt" style="font-size: 16px; width: 16px; height: 16px;"></span>
+                    <?php esc_html_e('Back to Users', 'globalswiftpay-dashboard'); ?>
+                </a>
+            </div>
+            
+            <h1><?php printf(esc_html__('User Details: %s', 'globalswiftpay-dashboard'), esc_html($user->display_name)); ?></h1>
+            
+            <!-- User Info Card -->
+            <div class="gsp-admin-cards" style="margin-bottom: 30px;">
+                <div class="gsp-admin-card">
+                    <div class="gsp-admin-card-icon deposits">
+                        <span class="dashicons dashicons-admin-users"></span>
+                    </div>
+                    <div class="gsp-admin-card-content">
+                        <h3 style="font-size: 16px; margin: 0;"><?php echo esc_html($user->display_name); ?></h3>
+                        <p style="margin: 5px 0 0; color: #718096; font-size: 13px;"><?php echo esc_html($user->user_email); ?></p>
+                        <p style="margin: 5px 0 0; color: #a0aec0; font-size: 12px;">
+                            <?php esc_html_e('Username:', 'globalswiftpay-dashboard'); ?> <?php echo esc_html($user->user_login); ?> &bull;
+                            <?php esc_html_e('Roles:', 'globalswiftpay-dashboard'); ?> <?php echo esc_html(implode(', ', $user->roles)); ?> &bull;
+                            <?php esc_html_e('Registered:', 'globalswiftpay-dashboard'); ?> <?php echo esc_html(date('M j, Y', strtotime($user->user_registered))); ?>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="gsp-admin-card">
+                    <div class="gsp-admin-card-icon withdrawals">
+                        <span class="dashicons dashicons-money-alt"></span>
+                    </div>
+                    <div class="gsp-admin-card-content">
+                        <h3 style="font-size: 24px; margin: 0;">$<?php echo esc_html(number_format($balance->wallet_balance, 2)); ?></h3>
+                        <p style="margin: 5px 0 0; color: #718096;"><?php esc_html_e('Wallet Balance', 'globalswiftpay-dashboard'); ?></p>
+                    </div>
+                </div>
+                
+                <div class="gsp-admin-card">
+                    <div class="gsp-admin-card-icon transfers">
+                        <span class="dashicons dashicons-vault"></span>
+                    </div>
+                    <div class="gsp-admin-card-content">
+                        <h3 style="font-size: 24px; margin: 0;">$<?php echo esc_html(number_format($balance->savings_balance, 2)); ?></h3>
+                        <p style="margin: 5px 0 0; color: #718096;"><?php esc_html_e('Savings Balance', 'globalswiftpay-dashboard'); ?></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Deposits -->
+            <div class="gsp-admin-table-container" style="margin-bottom: 30px;">
+                <h2><?php esc_html_e('Recent Deposits', 'globalswiftpay-dashboard'); ?></h2>
+                <table class="gsp-admin-table">
+                    <thead>
+                        <tr>
+                            <th><?php esc_html_e('ID', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Amount', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Status', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Date', 'globalswiftpay-dashboard'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($deposits)): ?>
+                            <tr><td colspan="4" class="gsp-admin-no-data"><?php esc_html_e('No deposits found.', 'globalswiftpay-dashboard'); ?></td></tr>
+                        <?php else: ?>
+                            <?php foreach ($deposits as $deposit): ?>
+                                <tr>
+                                    <td><?php echo esc_html($deposit->id); ?></td>
+                                    <td>$<?php echo esc_html(number_format($deposit->amount, 2)); ?></td>
+                                    <td><span class="gsp-status gsp-status-<?php echo esc_attr($deposit->status); ?>"><?php echo esc_html(ucfirst($deposit->status)); ?></span></td>
+                                    <td><?php echo esc_html(date('M j, Y g:i A', strtotime($deposit->created_at))); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Withdrawals -->
+            <div class="gsp-admin-table-container" style="margin-bottom: 30px;">
+                <h2><?php esc_html_e('Recent Withdrawals', 'globalswiftpay-dashboard'); ?></h2>
+                <table class="gsp-admin-table">
+                    <thead>
+                        <tr>
+                            <th><?php esc_html_e('ID', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Amount', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Method', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Status', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Date', 'globalswiftpay-dashboard'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($withdrawals)): ?>
+                            <tr><td colspan="5" class="gsp-admin-no-data"><?php esc_html_e('No withdrawals found.', 'globalswiftpay-dashboard'); ?></td></tr>
+                        <?php else: ?>
+                            <?php foreach ($withdrawals as $withdrawal): ?>
+                                <tr>
+                                    <td><?php echo esc_html($withdrawal->id); ?></td>
+                                    <td>$<?php echo esc_html(number_format($withdrawal->amount, 2)); ?></td>
+                                    <td><?php echo esc_html(ucfirst($withdrawal->withdrawal_method)); ?></td>
+                                    <td><span class="gsp-status gsp-status-<?php echo esc_attr($withdrawal->status); ?>"><?php echo esc_html(ucfirst($withdrawal->status)); ?></span></td>
+                                    <td><?php echo esc_html(date('M j, Y g:i A', strtotime($withdrawal->created_at))); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Transfers Sent -->
+            <div class="gsp-admin-table-container" style="margin-bottom: 30px;">
+                <h2><?php esc_html_e('Transfers Sent', 'globalswiftpay-dashboard'); ?></h2>
+                <table class="gsp-admin-table">
+                    <thead>
+                        <tr>
+                            <th><?php esc_html_e('ID', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('To', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Amount', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Status', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Date', 'globalswiftpay-dashboard'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($transfers_sent)): ?>
+                            <tr><td colspan="5" class="gsp-admin-no-data"><?php esc_html_e('No transfers sent.', 'globalswiftpay-dashboard'); ?></td></tr>
+                        <?php else: ?>
+                            <?php foreach ($transfers_sent as $transfer): ?>
+                                <tr>
+                                    <td><?php echo esc_html($transfer->id); ?></td>
+                                    <td><?php echo esc_html($transfer->to_name ?: __('Unknown', 'globalswiftpay-dashboard')); ?></td>
+                                    <td>$<?php echo esc_html(number_format($transfer->amount, 2)); ?></td>
+                                    <td><span class="gsp-status gsp-status-<?php echo esc_attr($transfer->status); ?>"><?php echo esc_html(ucfirst($transfer->status)); ?></span></td>
+                                    <td><?php echo esc_html(date('M j, Y g:i A', strtotime($transfer->created_at))); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Transfers Received -->
+            <div class="gsp-admin-table-container" style="margin-bottom: 30px;">
+                <h2><?php esc_html_e('Transfers Received', 'globalswiftpay-dashboard'); ?></h2>
+                <table class="gsp-admin-table">
+                    <thead>
+                        <tr>
+                            <th><?php esc_html_e('ID', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('From', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Amount', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Status', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Date', 'globalswiftpay-dashboard'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($transfers_received)): ?>
+                            <tr><td colspan="5" class="gsp-admin-no-data"><?php esc_html_e('No transfers received.', 'globalswiftpay-dashboard'); ?></td></tr>
+                        <?php else: ?>
+                            <?php foreach ($transfers_received as $transfer): ?>
+                                <tr>
+                                    <td><?php echo esc_html($transfer->id); ?></td>
+                                    <td><?php echo esc_html($transfer->from_name ?: __('Unknown', 'globalswiftpay-dashboard')); ?></td>
+                                    <td>$<?php echo esc_html(number_format($transfer->amount, 2)); ?></td>
+                                    <td><span class="gsp-status gsp-status-<?php echo esc_attr($transfer->status); ?>"><?php echo esc_html(ucfirst($transfer->status)); ?></span></td>
+                                    <td><?php echo esc_html(date('M j, Y g:i A', strtotime($transfer->created_at))); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
         <?php
