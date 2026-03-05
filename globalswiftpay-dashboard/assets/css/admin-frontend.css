@@ -281,7 +281,7 @@ span[class*="iconify"] {
 .gsp-users-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 700px;
+    min-width: 1000px;
 }
 
 .gsp-users-table th,

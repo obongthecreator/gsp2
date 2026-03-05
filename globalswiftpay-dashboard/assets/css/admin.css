@@ -150,12 +150,16 @@
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    overflow-x: auto;
 }
 
 .gsp-admin-table {
     width: 100%;
     border-collapse: collapse;
+}
+
+.gsp-users-table {
+    min-width: 1200px;
 }
 
 .gsp-users-table th,
@@ -170,7 +174,7 @@
 }
 
 .gsp-user-actions-cell {
-    min-width: 220px;
+    min-width: 380px;
 }
 
 .gsp-user-actions {
