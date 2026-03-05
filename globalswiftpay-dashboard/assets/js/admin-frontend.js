@@ -243,6 +243,28 @@
                 Modal.open('admin-edit-balance-modal');
             });
             
+            // Add Balance Button (per-user row)
+            $(document).on('click', '.gsp-add-balance-btn', function() {
+                const $row = $(this).closest('tr');
+                const userId = $row.data('user-id');
+                
+                // Pre-select the user in the dropdown
+                $('#add-bal-user').val(userId);
+                
+                Modal.open('admin-add-balance-modal');
+            });
+            
+            // Deduct Balance Button (per-user row)
+            $(document).on('click', '.gsp-deduct-balance-btn', function() {
+                const $row = $(this).closest('tr');
+                const userId = $row.data('user-id');
+                
+                // Pre-select the user in the dropdown
+                $('#deduct-bal-user').val(userId);
+                
+                Modal.open('admin-deduct-balance-modal');
+            });
+            
             // Edit User Button
             $(document).on('click', '.gsp-edit-user-btn', function() {
                 const $row = $(this).closest('tr');

@@ -388,6 +388,8 @@ $pending_conversions = GSP_Transactions::get_all_conversions('pending');
                         <tr>
                             <th><?php esc_html_e('User', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Email', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Phone', 'globalswiftpay-dashboard'); ?></th>
+                            <th><?php esc_html_e('Country', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Status', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Wallet Balance', 'globalswiftpay-dashboard'); ?></th>
                             <th><?php esc_html_e('Savings', 'globalswiftpay-dashboard'); ?></th>
@@ -397,12 +399,14 @@ $pending_conversions = GSP_Transactions::get_all_conversions('pending');
                     <tbody id="gsp-users-tbody">
                         <?php if (empty($all_users)): ?>
                             <tr>
-                                <td colspan="6" class="gsp-no-data"><?php esc_html_e('No users found.', 'globalswiftpay-dashboard'); ?></td>
+                                <td colspan="8" class="gsp-no-data"><?php esc_html_e('No users found.', 'globalswiftpay-dashboard'); ?></td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($all_users as $index => $user): 
                                 $balance = GSP_User::get_balance($user->ID);
                                 $user_status = get_user_meta($user->ID, 'gsp_user_status', true);
+                                $user_phone = get_user_meta($user->ID, 'gsp_mobile', true);
+                                $user_country = get_user_meta($user->ID, 'gsp_country', true);
                                 
                                 // Auto-detect status if not explicitly set
                                 if (empty($user_status)) {
@@ -442,6 +446,8 @@ $pending_conversions = GSP_Transactions::get_all_conversions('pending');
                                         </div>
                                     </td>
                                     <td><?php echo esc_html($user->user_email); ?></td>
+                                    <td><?php echo $user_phone ? esc_html($user_phone) : '<span style="color: rgba(255,255,255,0.3);">—</span>'; ?></td>
+                                    <td><?php echo $user_country ? esc_html($user_country) : '<span style="color: rgba(255,255,255,0.3);">—</span>'; ?></td>
                                     <td class="gsp-status-cell">
                                         <span class="gsp-user-status gsp-status-<?php echo esc_attr($user_status); ?>">
                                             <?php echo esc_html(ucfirst($user_status)); ?>
@@ -460,6 +466,12 @@ $pending_conversions = GSP_Transactions::get_all_conversions('pending');
                                             <span class="iconify" data-icon="solar:close-circle-linear" width="18" height="18"></span>
                                         </button>
                                         <?php endif; ?>
+                                        <button class="gsp-icon-btn gsp-add-balance-btn gsp-btn-success" title="<?php esc_attr_e('Add Balance', 'globalswiftpay-dashboard'); ?>">
+                                            <span class="iconify" data-icon="solar:add-circle-linear" width="18" height="18"></span>
+                                        </button>
+                                        <button class="gsp-icon-btn gsp-deduct-balance-btn gsp-btn-warning" title="<?php esc_attr_e('Deduct Balance', 'globalswiftpay-dashboard'); ?>">
+                                            <span class="iconify" data-icon="solar:minus-circle-linear" width="18" height="18"></span>
+                                        </button>
                                         <button class="gsp-icon-btn gsp-edit-balance-btn" title="<?php esc_attr_e('Edit Balance', 'globalswiftpay-dashboard'); ?>">
                                             <span class="iconify" data-icon="solar:pen-linear" width="18" height="18"></span>
                                         </button>
