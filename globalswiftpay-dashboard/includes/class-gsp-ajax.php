@@ -37,6 +37,7 @@ class GSP_Ajax {
         add_action('wp_ajax_gsp_admin_migrate_wallet_balances', array($this, 'admin_migrate_wallet_balances'));
         add_action('wp_ajax_gsp_admin_migrate_all_wallet_sources', array($this, 'admin_migrate_all_wallet_sources'));
         add_action('wp_ajax_gsp_admin_import_csv_balances', array($this, 'admin_import_csv_balances'));
+        add_action('wp_ajax_gsp_admin_import_rm_users', array($this, 'admin_import_rm_users'));
     }
     
     /**
@@ -1202,5 +1203,301 @@ class GSP_Ajax {
         } else {
             wp_send_json_error(array('message' => $message));
         }
+    }
+
+    /**
+     * Admin: Import Registration Magic user data from XML
+     */
+    public function admin_import_rm_users() {
+        $this->verify_admin_nonce();
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'You do not have permission to import users.'));
+        }
+        
+        // Look for the RM XML file in the plugin directory or uploads
+        $xml_paths = array(
+            ABSPATH . 'RMagic (1).xml',
+            ABSPATH . 'RMagic.xml',
+            WP_CONTENT_DIR . '/uploads/RMagic (1).xml',
+            WP_CONTENT_DIR . '/uploads/RMagic.xml',
+        );
+        
+        // Also check the repository root if running in dev
+        $plugin_dir = dirname(dirname(__FILE__));
+        $repo_dir = dirname($plugin_dir);
+        $xml_paths[] = $repo_dir . '/RMagic (1).xml';
+        $xml_paths[] = $repo_dir . '/RMagic.xml';
+        
+        $xml_file = null;
+        foreach ($xml_paths as $path) {
+            if (file_exists($path)) {
+                $xml_file = $path;
+                break;
+            }
+        }
+        
+        if (!$xml_file) {
+            wp_send_json_error(array('message' => 'Registration Magic XML file not found. Please upload the file to your WordPress root directory as "RMagic.xml".'));
+        }
+        
+        // Parse the XML (disable external entities for security)
+        $prev_entity_loader = libxml_disable_entity_loader(true);
+        $xml = simplexml_load_file($xml_file, 'SimpleXMLElement', LIBXML_NONET);
+        libxml_disable_entity_loader($prev_entity_loader);
+        if (!$xml) {
+            wp_send_json_error(array('message' => 'Failed to parse the XML file. Please ensure it is a valid Registration Magic export.'));
+        }
+        
+        $forms = $xml->FORMS;
+        if (!$forms) {
+            wp_send_json_error(array('message' => 'Invalid XML structure: FORMS element not found.'));
+        }
+        
+        // Build field_id -> label mapping
+        $field_map = array();
+        foreach ($forms->FIELDS as $field) {
+            $fid = (string)$field->field_id;
+            $label = (string)$field->field_label;
+            $type = (string)$field->field_type;
+            $field_map[$fid] = array('label' => $label, 'type' => $type);
+        }
+        
+        // Build submission_id -> email mapping
+        $sub_emails = array();
+        foreach ($forms->SUBMISSIONS as $sub) {
+            $sid = (string)$sub->submission_id;
+            $email = (string)$sub->user_email;
+            $sub_emails[$sid] = $email;
+        }
+        
+        // Identify field IDs for target fields
+        $username_field_ids = array();
+        $email_field_ids = array();
+        $fname_field_ids = array();
+        $lname_field_ids = array();
+        $country_field_ids = array();
+        $mobile_field_ids = array();
+        $phone_field_ids = array();
+        
+        foreach ($field_map as $fid => $info) {
+            $type_lower = strtolower($info['type']);
+            $label_lower = strtolower($info['label']);
+            
+            if ($type_lower === 'username' || $label_lower === 'gsp account number') {
+                $username_field_ids[] = $fid;
+            } elseif ($type_lower === 'email') {
+                $email_field_ids[] = $fid;
+            } elseif ($type_lower === 'fname' || $label_lower === 'first name') {
+                $fname_field_ids[] = $fid;
+            } elseif ($type_lower === 'lname' || $label_lower === 'last name') {
+                $lname_field_ids[] = $fid;
+            } elseif ($type_lower === 'country') {
+                $country_field_ids[] = $fid;
+            } elseif ($type_lower === 'mobile' || $label_lower === 'mobile number') {
+                $mobile_field_ids[] = $fid;
+            }
+        }
+        
+        // Also check for phone numbers in fields not listed in FIELDS definition
+        // (field 23 appears in submissions but not in field definitions for this export)
+        $all_submission_fids = array();
+        foreach ($forms->SUBMISSION_FIELDS as $sf) {
+            $fid = (string)$sf->field_id;
+            $all_submission_fids[$fid] = true;
+        }
+        foreach ($all_submission_fids as $fid => $_) {
+            if (!isset($field_map[$fid])) {
+                $phone_field_ids[] = $fid;
+            }
+        }
+        
+        // Build user data from SUBMISSION_FIELDS
+        $submissions = array();
+        foreach ($forms->SUBMISSION_FIELDS as $sf) {
+            $sid = (string)$sf->submission_id;
+            $fid = (string)$sf->field_id;
+            $val = (string)$sf->value;
+            
+            if (!isset($submissions[$sid])) {
+                $submissions[$sid] = array();
+            }
+            $submissions[$sid][$fid] = $val;
+        }
+        
+        // Build user records
+        $users_data = array();
+        foreach ($submissions as $sid => $fields) {
+            // Get email from submission fields first, then from submissions table
+            $email = '';
+            foreach ($email_field_ids as $fid) {
+                if (!empty($fields[$fid])) {
+                    $email = $fields[$fid];
+                    break;
+                }
+            }
+            if (empty($email) && isset($sub_emails[$sid])) {
+                $email = $sub_emails[$sid];
+            }
+            
+            if (empty($email)) {
+                continue;
+            }
+            
+            // Get GSP account number
+            $gsp_account = '';
+            foreach ($username_field_ids as $fid) {
+                if (!empty($fields[$fid])) {
+                    $gsp_account = $fields[$fid];
+                    break;
+                }
+            }
+            
+            // Get first name
+            $first_name = '';
+            foreach ($fname_field_ids as $fid) {
+                if (!empty($fields[$fid])) {
+                    $first_name = $fields[$fid];
+                    break;
+                }
+            }
+            
+            // Get last name
+            $last_name = '';
+            foreach ($lname_field_ids as $fid) {
+                if (!empty($fields[$fid])) {
+                    $last_name = $fields[$fid];
+                    break;
+                }
+            }
+            
+            // Get country (clean format like "Turkey[TR]" -> "Turkey")
+            $country = '';
+            foreach ($country_field_ids as $fid) {
+                if (!empty($fields[$fid])) {
+                    $country = preg_replace('/\[[A-Z]{2,3}\]$/', '', $fields[$fid]);
+                    $country = trim($country);
+                    break;
+                }
+            }
+            
+            // Get mobile number (prefer mobile field, fall back to phone fields)
+            $mobile = '';
+            foreach ($mobile_field_ids as $fid) {
+                if (!empty($fields[$fid])) {
+                    $mobile = $fields[$fid];
+                    break;
+                }
+            }
+            if (empty($mobile)) {
+                foreach ($phone_field_ids as $fid) {
+                    if (!empty($fields[$fid]) && preg_match('/^[\+\d\s\-\(\)]+$/', $fields[$fid])) {
+                        $mobile = $fields[$fid];
+                        break;
+                    }
+                }
+            }
+            
+            $users_data[strtolower($email)] = array(
+                'email' => $email,
+                'gsp_account' => $gsp_account,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'country' => $country,
+                'mobile' => $mobile,
+            );
+        }
+        
+        // Now match with WordPress users and update meta
+        $updated = 0;
+        $not_found = 0;
+        $skipped = 0;
+        $total = count($users_data);
+        
+        foreach ($users_data as $email_key => $data) {
+            $wp_user = get_user_by('email', $data['email']);
+            
+            // Try case-insensitive email match
+            if (!$wp_user) {
+                $wp_user = get_user_by('email', strtolower($data['email']));
+            }
+            
+            if (!$wp_user) {
+                // Try matching by GSP account number (username)
+                if (!empty($data['gsp_account'])) {
+                    $wp_user = get_user_by('login', $data['gsp_account']);
+                }
+            }
+            
+            if (!$wp_user) {
+                $not_found++;
+                continue;
+            }
+            
+            $user_updated = false;
+            
+            // Update GSP account number
+            if (!empty($data['gsp_account'])) {
+                $existing = get_user_meta($wp_user->ID, 'gsp_account_number', true);
+                if (empty($existing)) {
+                    update_user_meta($wp_user->ID, 'gsp_account_number', sanitize_text_field($data['gsp_account']));
+                    $user_updated = true;
+                }
+            }
+            
+            // Update mobile
+            if (!empty($data['mobile'])) {
+                $existing = get_user_meta($wp_user->ID, 'gsp_mobile', true);
+                if (empty($existing)) {
+                    update_user_meta($wp_user->ID, 'gsp_mobile', sanitize_text_field($data['mobile']));
+                    $user_updated = true;
+                }
+            }
+            
+            // Update country
+            if (!empty($data['country'])) {
+                $existing = get_user_meta($wp_user->ID, 'gsp_country', true);
+                if (empty($existing)) {
+                    update_user_meta($wp_user->ID, 'gsp_country', sanitize_text_field($data['country']));
+                    $user_updated = true;
+                }
+            }
+            
+            // Update first/last name if not already set
+            if (!empty($data['first_name'])) {
+                $existing = get_user_meta($wp_user->ID, 'first_name', true);
+                if (empty($existing)) {
+                    update_user_meta($wp_user->ID, 'first_name', sanitize_text_field($data['first_name']));
+                    $user_updated = true;
+                }
+            }
+            
+            if (!empty($data['last_name'])) {
+                $existing = get_user_meta($wp_user->ID, 'last_name', true);
+                if (empty($existing)) {
+                    update_user_meta($wp_user->ID, 'last_name', sanitize_text_field($data['last_name']));
+                    $user_updated = true;
+                }
+            }
+            
+            if ($user_updated) {
+                $updated++;
+            } else {
+                $skipped++;
+            }
+        }
+        
+        $message = sprintf(
+            'Import complete. %d users found in XML. %d users updated, %d already had data (skipped), %d not found in WordPress.',
+            $total, $updated, $skipped, $not_found
+        );
+        
+        wp_send_json_success(array(
+            'message' => $message,
+            'total' => $total,
+            'updated' => $updated,
+            'skipped' => $skipped,
+            'not_found' => $not_found
+        ));
     }
 }

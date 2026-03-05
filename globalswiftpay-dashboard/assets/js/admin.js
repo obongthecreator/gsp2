@@ -162,6 +162,11 @@
                 AdminActions.importCsvBalances($(this));
             });
             
+            // Registration Magic import button
+            $('#gsp-import-rm-users').on('click', function() {
+                AdminActions.importRmUsers($(this));
+            });
+            
             // Modal close
             $(document).on('click', '.gsp-modal-close', function() {
                 $(this).closest('.gsp-modal').removeClass('active').hide();
@@ -609,6 +614,43 @@
                 },
                 error: function() {
                     $btn.prop('disabled', false).text('Import Balances from CSV');
+                    AdminActions.showNotification(AdminActions.errorMessage, 'error');
+                }
+            });
+        },
+        
+        importRmUsers: function($btn) {
+            if (!confirm('This will import user details (phone, country, GSP account) from the Registration Magic XML file. Continue?')) {
+                return;
+            }
+            
+            $btn.prop('disabled', true).text('Importing...');
+            
+            $.ajax({
+                url: gsp_admin_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'gsp_admin_import_rm_users',
+                    nonce: gsp_admin_ajax.nonce
+                },
+                success: function(response) {
+                    $btn.prop('disabled', false).text('Import Registration Magic Users');
+                    
+                    const $results = $('#gsp-rm-import-results');
+                    const $message = $('#gsp-rm-import-message');
+                    
+                    if (response.success) {
+                        AdminActions.showNotification('Registration Magic import completed successfully.', 'success');
+                        $message.text(response.data.message).css('color', 'green');
+                    } else {
+                        AdminActions.showNotification('Registration Magic import failed.', 'error');
+                        $message.text(response.data.message).css('color', 'red');
+                    }
+                    
+                    $results.show();
+                },
+                error: function() {
+                    $btn.prop('disabled', false).text('Import Registration Magic Users');
                     AdminActions.showNotification(AdminActions.errorMessage, 'error');
                 }
             });

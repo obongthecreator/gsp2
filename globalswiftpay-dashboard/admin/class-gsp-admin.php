@@ -907,6 +907,25 @@ class GSP_Admin {
                     <div id="gsp-csv-import-message"></div>
                 </div>
             </div>
+            
+            <hr style="margin: 30px 0;">
+            
+            <h2><?php esc_html_e('Registration Magic User Import', 'globalswiftpay-dashboard'); ?></h2>
+            <p class="gsp-settings-description"><?php esc_html_e('Import user details (phone number, country, GSP account) from a Registration Magic XML export file. Users are matched by email address and their GSP2 profile fields are populated.', 'globalswiftpay-dashboard'); ?></p>
+            
+            <div class="gsp-admin-settings">
+                <div class="gsp-form-group">
+                    <p class="gsp-settings-description">
+                        <?php esc_html_e('Place your Registration Magic XML export file (RMagic.xml) in the WordPress root directory, then click the button below.', 'globalswiftpay-dashboard'); ?>
+                    </p>
+                    <button type="button" class="gsp-admin-btn gsp-btn-approve" id="gsp-import-rm-users"><?php esc_html_e('Import Registration Magic Users', 'globalswiftpay-dashboard'); ?></button>
+                </div>
+                
+                <div id="gsp-rm-import-results" style="display: none; margin-top: 20px;">
+                    <h3><?php esc_html_e('Import Results', 'globalswiftpay-dashboard'); ?></h3>
+                    <div id="gsp-rm-import-message"></div>
+                </div>
+            </div>
         </div>
         <?php
     }
