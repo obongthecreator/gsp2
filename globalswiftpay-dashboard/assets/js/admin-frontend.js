@@ -271,10 +271,14 @@
                 const userId = $row.data('user-id');
                 const userEmail = $row.data('user-email');
                 const userName = $row.data('user-name');
+                const userPhone = $row.data('user-phone') || '';
+                const userCountry = $row.data('user-country') || '';
                 
                 $('#edit-user-id').val(userId);
                 $('#edit-user-email').val(userEmail);
                 $('#edit-user-display-name').val(userName);
+                $('#edit-user-phone').val(userPhone);
+                $('#edit-user-country').val(userCountry);
                 $('#edit-user-password').val('');
                 
                 Modal.open('admin-edit-user-modal');
@@ -514,6 +518,8 @@
                     user_id: $form.find('[name="user_id"]').val(),
                     email: $form.find('[name="email"]').val(),
                     display_name: $form.find('[name="display_name"]').val(),
+                    phone: $form.find('[name="phone"]').val(),
+                    country: $form.find('[name="country"]').val(),
                     password: $form.find('[name="password"]').val()
                 },
                 success: function(response) {

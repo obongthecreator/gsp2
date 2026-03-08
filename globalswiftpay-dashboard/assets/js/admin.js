@@ -90,10 +90,14 @@
                 const userId = $(this).data('user-id');
                 const email = $(this).data('email');
                 const displayName = $(this).data('display-name');
+                const phone = $(this).data('phone') || '';
+                const country = $(this).data('country') || '';
                 
                 $('#edit-user-id').val(userId);
                 $('#edit-user-email').val(email);
                 $('#edit-user-display-name').val(displayName);
+                $('#edit-user-phone').val(phone);
+                $('#edit-user-country').val(country);
                 $('#edit-user-password').val('');
                 $('#gsp-edit-user-modal').addClass('active').show();
             });
@@ -165,6 +169,11 @@
             // Registration Magic import button
             $('#gsp-import-rm-users').on('click', function() {
                 AdminActions.importRmUsers($(this));
+            });
+            
+            // Auto-migrate user details button
+            $('#gsp-migrate-user-details').on('click', function() {
+                AdminActions.migrateUserDetails($(this));
             });
             
             // Modal close
@@ -381,6 +390,8 @@
                     user_id: userId,
                     email: $('#edit-user-email').val(),
                     display_name: $('#edit-user-display-name').val(),
+                    phone: $('#edit-user-phone').val(),
+                    country: $('#edit-user-country').val(),
                     password: $('#edit-user-password').val()
                 },
                 success: function(response) {
@@ -395,7 +406,9 @@
                         // Update button data attributes
                         $row.find('.gsp-btn-edit-user')
                             .data('email', $('#edit-user-email').val())
-                            .data('display-name', $('#edit-user-display-name').val());
+                            .data('display-name', $('#edit-user-display-name').val())
+                            .data('phone', $('#edit-user-phone').val())
+                            .data('country', $('#edit-user-country').val());
                         
                         $('#gsp-edit-user-modal').removeClass('active').hide();
                         AdminActions.showNotification(response.data.message, 'success');
@@ -651,6 +664,43 @@
                 },
                 error: function() {
                     $btn.prop('disabled', false).text('Import Registration Magic Users');
+                    AdminActions.showNotification(AdminActions.errorMessage, 'error');
+                }
+            });
+        },
+        
+        migrateUserDetails: function($btn) {
+            if (!confirm('This will scan all users and migrate phone numbers and countries from other plugins (WooCommerce, BuddyPress, Ultimate Member, Registration Magic, etc.) into GSP2 profiles. Only users without existing data will be updated. Continue?')) {
+                return;
+            }
+            
+            $btn.prop('disabled', true).text('Migrating...');
+            
+            $.ajax({
+                url: gsp_admin_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'gsp_admin_migrate_user_details',
+                    nonce: gsp_admin_ajax.nonce
+                },
+                success: function(response) {
+                    $btn.prop('disabled', false).text('Auto-Migrate Phone & Country');
+                    
+                    var $results = $('#gsp-migrate-details-results');
+                    var $message = $('#gsp-migrate-details-message');
+                    
+                    if (response.success) {
+                        AdminActions.showNotification('User details migration completed.', 'success');
+                        $message.text(response.data.message).css('color', 'green');
+                    } else {
+                        AdminActions.showNotification('Migration failed.', 'error');
+                        $message.text(response.data.message).css('color', 'red');
+                    }
+                    
+                    $results.show();
+                },
+                error: function() {
+                    $btn.prop('disabled', false).text('Auto-Migrate Phone & Country');
                     AdminActions.showNotification(AdminActions.errorMessage, 'error');
                 }
             });

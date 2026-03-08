@@ -432,6 +432,8 @@ $pending_conversions = GSP_Transactions::get_all_conversions('pending');
                                 <tr class="gsp-user-row" data-user-id="<?php echo esc_attr($user->ID); ?>" 
                                     data-user-email="<?php echo esc_attr($user->user_email); ?>"
                                     data-user-name="<?php echo esc_attr($user->display_name); ?>"
+                                    data-user-phone="<?php echo esc_attr($user_phone); ?>"
+                                    data-user-country="<?php echo esc_attr($user_country); ?>"
                                     data-user-status="<?php echo esc_attr($user_status); ?>"
                                     data-wallet-balance="<?php echo esc_attr($balance->wallet_balance); ?>"
                                     data-savings-balance="<?php echo esc_attr($balance->savings_balance); ?>"
@@ -658,6 +660,14 @@ $pending_conversions = GSP_Transactions::get_all_conversions('pending');
             <div class="gsp-form-group">
                 <label for="edit-user-display-name"><?php esc_html_e('Display Name', 'globalswiftpay-dashboard'); ?></label>
                 <input type="text" id="edit-user-display-name" name="display_name" class="gsp-input" required>
+            </div>
+            <div class="gsp-form-group">
+                <label for="edit-user-phone"><?php esc_html_e('Phone Number', 'globalswiftpay-dashboard'); ?></label>
+                <input type="text" id="edit-user-phone" name="phone" class="gsp-input" placeholder="<?php esc_attr_e('e.g. +1234567890', 'globalswiftpay-dashboard'); ?>">
+            </div>
+            <div class="gsp-form-group">
+                <label for="edit-user-country"><?php esc_html_e('Country', 'globalswiftpay-dashboard'); ?></label>
+                <input type="text" id="edit-user-country" name="country" class="gsp-input" placeholder="<?php esc_attr_e('e.g. United States', 'globalswiftpay-dashboard'); ?>">
             </div>
             <div class="gsp-form-group">
                 <label for="edit-user-password"><?php esc_html_e('New Password (leave empty to keep current)', 'globalswiftpay-dashboard'); ?></label>

@@ -38,6 +38,7 @@ class GSP_Ajax {
         add_action('wp_ajax_gsp_admin_migrate_all_wallet_sources', array($this, 'admin_migrate_all_wallet_sources'));
         add_action('wp_ajax_gsp_admin_import_csv_balances', array($this, 'admin_import_csv_balances'));
         add_action('wp_ajax_gsp_admin_import_rm_users', array($this, 'admin_import_rm_users'));
+        add_action('wp_ajax_gsp_admin_migrate_user_details', array($this, 'admin_migrate_user_details'));
     }
     
     /**
@@ -876,6 +877,8 @@ class GSP_Ajax {
         $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
         $display_name = isset($_POST['display_name']) ? sanitize_text_field($_POST['display_name']) : '';
         $password = isset($_POST['password']) ? $_POST['password'] : '';
+        $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
+        $country = isset($_POST['country']) ? sanitize_text_field($_POST['country']) : '';
         
         if (!$user_id) {
             wp_send_json_error(array('message' => 'Invalid user.'));
@@ -916,7 +919,15 @@ class GSP_Ajax {
             wp_send_json_error(array('message' => $result->get_error_message()));
         }
         
-        wp_send_json_success(array('message' => 'User updated successfully.'));
+        // Update phone and country user meta
+        update_user_meta($user_id, 'gsp_mobile', $phone);
+        update_user_meta($user_id, 'gsp_country', $country);
+        
+        wp_send_json_success(array(
+            'message' => 'User updated successfully.',
+            'phone' => $phone,
+            'country' => $country
+        ));
     }
 
     /**
@@ -1498,6 +1509,146 @@ class GSP_Ajax {
             'updated' => $updated,
             'skipped' => $skipped,
             'not_found' => $not_found
+        ));
+    }
+
+    /**
+     * Admin: Auto-migrate phone and country from other plugins
+     * Scans common user meta keys from Registration Magic, WooCommerce, BuddyPress, etc.
+     */
+    public function admin_migrate_user_details() {
+        $this->verify_admin_nonce();
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'You do not have permission to perform this action.'));
+        }
+        
+        // Known meta keys for phone numbers across popular plugins
+        $phone_meta_keys = array(
+            'billing_phone',           // WooCommerce
+            'shipping_phone',          // WooCommerce
+            'phone',                   // Generic
+            'phone_number',            // Generic
+            'mobile',                  // Generic
+            'mobile_number',           // Generic
+            'user_phone',              // Generic
+            '_phone',                  // Various
+            'bp_phone',               // BuddyPress
+            'mepr_phone',             // MemberPress
+            'um_phone_number',        // Ultimate Member
+            'rm_phone',               // Registration Magic
+            'rmagic_phone',           // Registration Magic
+        );
+        
+        // Known meta keys for country across popular plugins
+        $country_meta_keys = array(
+            'billing_country',         // WooCommerce
+            'shipping_country',        // WooCommerce
+            'country',                 // Generic
+            'user_country',            // Generic
+            '_country',                // Various
+            'bp_country',             // BuddyPress
+            'mepr_country',           // MemberPress
+            'um_country',             // Ultimate Member
+            'rm_country',             // Registration Magic
+            'rmagic_country',         // Registration Magic
+        );
+        
+        // Country code to name mapping for WooCommerce 2-letter codes
+        $country_codes = array(
+            'US' => 'United States', 'GB' => 'United Kingdom', 'CA' => 'Canada',
+            'AU' => 'Australia', 'DE' => 'Germany', 'FR' => 'France', 'NG' => 'Nigeria',
+            'GH' => 'Ghana', 'KE' => 'Kenya', 'ZA' => 'South Africa', 'IN' => 'India',
+            'BR' => 'Brazil', 'MX' => 'Mexico', 'JP' => 'Japan', 'CN' => 'China',
+            'KR' => 'South Korea', 'IT' => 'Italy', 'ES' => 'Spain', 'NL' => 'Netherlands',
+            'SE' => 'Sweden', 'NO' => 'Norway', 'DK' => 'Denmark', 'FI' => 'Finland',
+            'PL' => 'Poland', 'RU' => 'Russia', 'TR' => 'Turkey', 'AE' => 'United Arab Emirates',
+            'SA' => 'Saudi Arabia', 'EG' => 'Egypt', 'PH' => 'Philippines', 'TH' => 'Thailand',
+            'MY' => 'Malaysia', 'SG' => 'Singapore', 'ID' => 'Indonesia', 'PK' => 'Pakistan',
+            'BD' => 'Bangladesh', 'LK' => 'Sri Lanka', 'NZ' => 'New Zealand', 'IE' => 'Ireland',
+            'CH' => 'Switzerland', 'AT' => 'Austria', 'BE' => 'Belgium', 'PT' => 'Portugal',
+            'GR' => 'Greece', 'CZ' => 'Czech Republic', 'RO' => 'Romania', 'HU' => 'Hungary',
+            'IL' => 'Israel', 'CL' => 'Chile', 'CO' => 'Colombia', 'AR' => 'Argentina',
+            'PE' => 'Peru', 'VE' => 'Venezuela', 'EC' => 'Ecuador', 'UY' => 'Uruguay',
+            'CR' => 'Costa Rica', 'PA' => 'Panama', 'JM' => 'Jamaica', 'TT' => 'Trinidad and Tobago',
+            'CM' => 'Cameroon', 'CI' => 'Ivory Coast', 'SN' => 'Senegal', 'TZ' => 'Tanzania',
+            'UG' => 'Uganda', 'ZW' => 'Zimbabwe', 'ET' => 'Ethiopia', 'RW' => 'Rwanda',
+        );
+        
+        $users = get_users(array('fields' => array('ID')));
+        $updated_phone = 0;
+        $updated_country = 0;
+        $already_set = 0;
+        $sources_found = array();
+        
+        foreach ($users as $user) {
+            $uid = $user->ID;
+            $existing_phone = get_user_meta($uid, 'gsp_mobile', true);
+            $existing_country = get_user_meta($uid, 'gsp_country', true);
+            
+            // Migrate phone number
+            if (empty($existing_phone)) {
+                foreach ($phone_meta_keys as $key) {
+                    $value = get_user_meta($uid, $key, true);
+                    if (!empty($value)) {
+                        update_user_meta($uid, 'gsp_mobile', sanitize_text_field($value));
+                        $updated_phone++;
+                        if (!isset($sources_found[$key])) $sources_found[$key] = 0;
+                        $sources_found[$key]++;
+                        break;
+                    }
+                }
+            } else {
+                $already_set++;
+            }
+            
+            // Migrate country
+            if (empty($existing_country)) {
+                foreach ($country_meta_keys as $key) {
+                    $value = get_user_meta($uid, $key, true);
+                    if (!empty($value)) {
+                        // Convert 2-letter country codes to names
+                        $country_name = $value;
+                        if (strlen($value) === 2 && isset($country_codes[strtoupper($value)])) {
+                            $country_name = $country_codes[strtoupper($value)];
+                        }
+                        // Remove bracket suffixes like "Turkey[TR]"
+                        $country_name = preg_replace('/\[[A-Z]{2,3}\]$/', '', $country_name);
+                        $country_name = trim($country_name);
+                        
+                        update_user_meta($uid, 'gsp_country', sanitize_text_field($country_name));
+                        $updated_country++;
+                        if (!isset($sources_found[$key])) $sources_found[$key] = 0;
+                        $sources_found[$key]++;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        $total_users = count($users);
+        $source_summary = array();
+        foreach ($sources_found as $key => $count) {
+            $source_summary[] = $key . ': ' . $count . ' users';
+        }
+        
+        $message = sprintf(
+            "Migration complete.\nTotal users scanned: %d\nPhone numbers migrated: %d\nCountries migrated: %d\nAlready had phone set: %d",
+            $total_users, $updated_phone, $updated_country, $already_set
+        );
+        
+        if (!empty($source_summary)) {
+            $message .= "\n\nSources found:\n" . implode("\n", $source_summary);
+        } else {
+            $message .= "\n\nNo additional phone/country data found in other plugins.";
+        }
+        
+        wp_send_json_success(array(
+            'message' => $message,
+            'updated_phone' => $updated_phone,
+            'updated_country' => $updated_country,
+            'total_users' => $total_users,
+            'sources' => $sources_found
         ));
     }
 }

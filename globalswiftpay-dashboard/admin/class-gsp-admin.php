@@ -581,7 +581,7 @@ class GSP_Admin {
                                         <button class="gsp-admin-btn gsp-btn-approve gsp-btn-add-balance" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>"><?php esc_html_e('Add Balance', 'globalswiftpay-dashboard'); ?></button>
                                         <button class="gsp-admin-btn gsp-btn-decline gsp-btn-deduct-balance" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>" data-balance="<?php echo esc_attr($balance->wallet_balance); ?>" data-savings="<?php echo esc_attr($balance->savings_balance); ?>"><?php esc_html_e('Deduct Balance', 'globalswiftpay-dashboard'); ?></button>
                                         <button class="gsp-admin-btn gsp-btn-edit-balance" data-user-id="<?php echo esc_attr($user->ID); ?>" data-balance="<?php echo esc_attr($balance->wallet_balance); ?>" data-savings="<?php echo esc_attr($balance->savings_balance); ?>"><?php esc_html_e('Edit Balance', 'globalswiftpay-dashboard'); ?></button>
-                                        <button class="gsp-admin-btn gsp-btn-save gsp-btn-edit-user" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>" data-email="<?php echo esc_attr($user->user_email); ?>" data-display-name="<?php echo esc_attr($user->display_name); ?>"><?php esc_html_e('Edit User', 'globalswiftpay-dashboard'); ?></button>
+                                        <button class="gsp-admin-btn gsp-btn-save gsp-btn-edit-user" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>" data-email="<?php echo esc_attr($user->user_email); ?>" data-display-name="<?php echo esc_attr($user->display_name); ?>" data-phone="<?php echo esc_attr($user_phone); ?>" data-country="<?php echo esc_attr($user_country); ?>"><?php esc_html_e('Edit User', 'globalswiftpay-dashboard'); ?></button>
                                         <?php if ($user->ID !== get_current_user_id()): ?>
                                         <button class="gsp-admin-btn gsp-btn-decline gsp-btn-delete-user" data-user-id="<?php echo esc_attr($user->ID); ?>" data-username="<?php echo esc_attr($user->user_login); ?>"><?php esc_html_e('Delete', 'globalswiftpay-dashboard'); ?></button>
                                         <?php endif; ?>
@@ -725,6 +725,14 @@ class GSP_Admin {
                     <div class="gsp-form-group">
                         <label for="edit-user-display-name"><?php esc_html_e('Display Name', 'globalswiftpay-dashboard'); ?></label>
                         <input type="text" id="edit-user-display-name" name="display_name" required>
+                    </div>
+                    <div class="gsp-form-group">
+                        <label for="edit-user-phone"><?php esc_html_e('Phone Number', 'globalswiftpay-dashboard'); ?></label>
+                        <input type="text" id="edit-user-phone" name="phone" placeholder="<?php esc_attr_e('e.g. +1234567890', 'globalswiftpay-dashboard'); ?>">
+                    </div>
+                    <div class="gsp-form-group">
+                        <label for="edit-user-country"><?php esc_html_e('Country', 'globalswiftpay-dashboard'); ?></label>
+                        <input type="text" id="edit-user-country" name="country" placeholder="<?php esc_attr_e('e.g. United States', 'globalswiftpay-dashboard'); ?>">
                     </div>
                     <div class="gsp-form-group">
                         <label for="edit-user-password"><?php esc_html_e('New Password (leave empty to keep current)', 'globalswiftpay-dashboard'); ?></label>
@@ -924,6 +932,22 @@ class GSP_Admin {
                 <div id="gsp-rm-import-results" style="display: none; margin-top: 20px;">
                     <h3><?php esc_html_e('Import Results', 'globalswiftpay-dashboard'); ?></h3>
                     <div id="gsp-rm-import-message"></div>
+                </div>
+            </div>
+            
+            <hr style="margin: 30px 0;">
+            
+            <h2><?php esc_html_e('Auto-Migrate User Details from Other Plugins', 'globalswiftpay-dashboard'); ?></h2>
+            <p class="gsp-settings-description"><?php esc_html_e('Automatically scan and migrate phone numbers and countries from other WordPress plugins (WooCommerce, BuddyPress, Ultimate Member, MemberPress, Registration Magic, etc.) into GSP2 user profiles. Only users without existing phone/country data will be updated.', 'globalswiftpay-dashboard'); ?></p>
+            
+            <div class="gsp-admin-settings">
+                <div class="gsp-form-group">
+                    <button type="button" class="gsp-admin-btn gsp-btn-approve" id="gsp-migrate-user-details"><?php esc_html_e('Auto-Migrate Phone & Country', 'globalswiftpay-dashboard'); ?></button>
+                </div>
+                
+                <div id="gsp-migrate-details-results" style="display: none; margin-top: 20px;">
+                    <h3><?php esc_html_e('Migration Results', 'globalswiftpay-dashboard'); ?></h3>
+                    <div id="gsp-migrate-details-message" style="white-space: pre-line;"></div>
                 </div>
             </div>
         </div>
