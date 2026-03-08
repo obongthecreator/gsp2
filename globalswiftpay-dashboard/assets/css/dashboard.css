@@ -1,0 +1,1231 @@
+/**
+ * GlobalSwiftPay Dashboard - Main Styles
+ * Dark blue theme with glass morphism effects and animations
+ */
+
+/* CSS Variables - Dark Mode (Default) */
+:root {
+    --gsp-primary: #0096ff;
+    --gsp-primary-dark: #0077cc;
+    --gsp-primary-light: #00d4ff;
+    --gsp-secondary: #1a1a2e;
+    --gsp-accent: #16213e;
+    --gsp-success: #00c853;
+    --gsp-warning: #ffc107;
+    --gsp-danger: #ff5252;
+    --gsp-text-primary: #ffffff;
+    --gsp-text-secondary: #b8c5d6;
+    --gsp-text-light: #8899aa;
+    --gsp-background: #0a1628;
+    --gsp-background-secondary: #0d1d35;
+    --gsp-white: #ffffff;
+    --gsp-card-bg: rgba(15, 35, 65, 0.85);
+    --gsp-glass-bg: rgba(20, 45, 85, 0.6);
+    --gsp-glass-border: rgba(0, 150, 255, 0.15);
+    --gsp-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --gsp-shadow-hover: 0 12px 40px rgba(0, 150, 255, 0.3);
+    --gsp-border-radius: 20px;
+    --gsp-border-radius-sm: 12px;
+    --gsp-transition: all 0.3s ease;
+    --gsp-beam-color: rgba(0, 150, 255, 0.4);
+    --gsp-beam-glow: rgba(0, 212, 255, 0.6);
+    --gsp-wire-color: rgba(0, 150, 255, 0.08);
+}
+
+/* Light Mode Variables */
+[data-theme="light"] {
+    --gsp-text-primary: #1a1a2e;
+    --gsp-text-secondary: #4a5568;
+    --gsp-text-light: #718096;
+    --gsp-background: #f0f5ff;
+    --gsp-background-secondary: #e8f4ff;
+    --gsp-card-bg: rgba(255, 255, 255, 0.95);
+    --gsp-glass-bg: rgba(255, 255, 255, 0.25);
+    --gsp-glass-border: rgba(0, 150, 255, 0.12);
+    --gsp-shadow: 0 8px 32px rgba(0, 150, 255, 0.15);
+    --gsp-shadow-hover: 0 12px 40px rgba(0, 150, 255, 0.25);
+    --gsp-beam-color: rgba(0, 150, 255, 0.2);
+    --gsp-beam-glow: rgba(0, 212, 255, 0.3);
+    --gsp-wire-color: rgba(0, 150, 255, 0.06);
+}
+
+/* Reset and Base */
+.gsp-dashboard {
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gsp-background);
+    min-height: 100vh;
+    padding: 30px;
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated Background with Noodles Beam and Circular Wire Frames */
+.gsp-dashboard::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        /* Circular wire frames */
+        radial-gradient(circle at 20% 30%, transparent 100px, var(--gsp-wire-color) 101px, var(--gsp-wire-color) 102px, transparent 103px),
+        radial-gradient(circle at 80% 70%, transparent 150px, var(--gsp-wire-color) 151px, var(--gsp-wire-color) 152px, transparent 153px),
+        radial-gradient(circle at 60% 20%, transparent 80px, var(--gsp-wire-color) 81px, var(--gsp-wire-color) 82px, transparent 83px),
+        radial-gradient(circle at 30% 80%, transparent 120px, var(--gsp-wire-color) 121px, var(--gsp-wire-color) 122px, transparent 123px),
+        radial-gradient(circle at 90% 40%, transparent 60px, var(--gsp-wire-color) 61px, var(--gsp-wire-color) 62px, transparent 63px),
+        radial-gradient(circle at 10% 60%, transparent 90px, var(--gsp-wire-color) 91px, var(--gsp-wire-color) 92px, transparent 93px),
+        radial-gradient(circle at 50% 50%, transparent 200px, var(--gsp-wire-color) 201px, var(--gsp-wire-color) 202px, transparent 203px),
+        radial-gradient(circle at 75% 25%, transparent 40px, var(--gsp-wire-color) 41px, var(--gsp-wire-color) 42px, transparent 43px),
+        radial-gradient(circle at 25% 45%, transparent 70px, var(--gsp-wire-color) 71px, var(--gsp-wire-color) 72px, transparent 73px),
+        /* Gradient base */
+        linear-gradient(135deg, var(--gsp-background) 0%, var(--gsp-background-secondary) 50%, var(--gsp-background) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Noodles Beam Animation Container */
+.gsp-noodles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.gsp-noodle {
+    position: absolute;
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, var(--gsp-beam-color), var(--gsp-beam-glow), var(--gsp-beam-color), transparent);
+    border-radius: 50px;
+    opacity: 0;
+    animation: noodleFloat 8s ease-in-out infinite;
+}
+
+.gsp-noodle:nth-child(1) { left: 10%; animation-delay: 0s; height: 80px; }
+.gsp-noodle:nth-child(2) { left: 20%; animation-delay: 1s; height: 120px; }
+.gsp-noodle:nth-child(3) { left: 35%; animation-delay: 2s; height: 60px; }
+.gsp-noodle:nth-child(4) { left: 50%; animation-delay: 3s; height: 140px; }
+.gsp-noodle:nth-child(5) { left: 65%; animation-delay: 4s; height: 90px; }
+.gsp-noodle:nth-child(6) { left: 80%; animation-delay: 5s; height: 110px; }
+.gsp-noodle:nth-child(7) { left: 90%; animation-delay: 6s; height: 70px; }
+.gsp-noodle:nth-child(8) { left: 45%; animation-delay: 1.5s; height: 100px; }
+.gsp-noodle:nth-child(9) { left: 75%; animation-delay: 2.5s; height: 85px; }
+.gsp-noodle:nth-child(10) { left: 5%; animation-delay: 3.5s; height: 95px; }
+
+@keyframes noodleFloat {
+    0% {
+        transform: translateY(100vh) rotate(10deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-100px) rotate(-10deg);
+        opacity: 0;
+    }
+}
+
+/* Horizontal Noodles */
+.gsp-noodle-h {
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gsp-beam-color), var(--gsp-beam-glow), var(--gsp-beam-color), transparent);
+    border-radius: 50px;
+    opacity: 0;
+    animation: noodleHorizontal 10s ease-in-out infinite;
+}
+
+.gsp-noodle-h:nth-child(11) { top: 15%; animation-delay: 0.5s; width: 120px; }
+.gsp-noodle-h:nth-child(12) { top: 35%; animation-delay: 2s; width: 80px; }
+.gsp-noodle-h:nth-child(13) { top: 55%; animation-delay: 3.5s; width: 150px; }
+.gsp-noodle-h:nth-child(14) { top: 75%; animation-delay: 5s; width: 100px; }
+.gsp-noodle-h:nth-child(15) { top: 85%; animation-delay: 7s; width: 90px; }
+
+@keyframes noodleHorizontal {
+    0% {
+        transform: translateX(-100px) rotate(5deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.5;
+    }
+    90% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(100vw) rotate(-5deg);
+        opacity: 0;
+    }
+}
+
+/* Dashboard Content Above Background */
+.gsp-dashboard > *:not(.gsp-noodles-container) {
+    position: relative;
+    z-index: 1;
+}
+
+.gsp-dashboard *,
+.gsp-dashboard *::before,
+.gsp-dashboard *::after {
+    box-sizing: border-box;
+}
+
+/* Glass morphism card effect */
+.gsp-glass-card {
+    background: var(--gsp-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--gsp-border-radius);
+    border: 1px solid var(--gsp-glass-border);
+    box-shadow: var(--gsp-shadow);
+    transition: var(--gsp-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.gsp-glass-card:hover {
+    box-shadow: var(--gsp-shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Card Beam Animation */
+.gsp-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 150, 255, 0.08),
+        rgba(0, 212, 255, 0.12),
+        rgba(0, 150, 255, 0.08),
+        transparent
+    );
+    animation: cardBeam 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes cardBeam {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Header Section */
+.gsp-header {
+    background: linear-gradient(135deg, var(--gsp-primary) 0%, var(--gsp-primary-light) 100%);
+    border-radius: var(--gsp-border-radius);
+    padding: 18px 25px;
+    margin-bottom: 20px;
+    box-shadow: var(--gsp-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header Beam Animation */
+.gsp-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    animation: headerBeam 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes headerBeam {
+    0% {
+        left: -50%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.gsp-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.gsp-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gsp-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gsp-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.gsp-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gsp-user-details h2 {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 3px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.gsp-user-details h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gsp-white);
+    margin: 0;
+}
+
+.gsp-btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--gsp-white);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--gsp-transition);
+}
+
+.gsp-btn-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    color: var(--gsp-white);
+}
+
+.gsp-btn-home {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 150, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 150, 255, 0.4);
+    color: var(--gsp-white);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--gsp-transition);
+}
+
+.gsp-btn-home:hover {
+    background: rgba(0, 150, 255, 0.5);
+    transform: translateY(-2px);
+    color: var(--gsp-white);
+}
+
+/* Icon-only buttons (theme toggle, home) */
+.gsp-btn-icon-only {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--gsp-white);
+    cursor: pointer;
+    transition: var(--gsp-transition);
+}
+
+.gsp-btn-icon-only:hover {
+    background: rgba(0, 150, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.gsp-btn-icon-only svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Theme toggle specific */
+.gsp-theme-toggle.gsp-btn-icon-only {
+    background: rgba(255, 200, 0, 0.2);
+    border-color: rgba(255, 200, 0, 0.3);
+}
+
+.gsp-theme-toggle.gsp-btn-icon-only:hover {
+    background: rgba(255, 200, 0, 0.4);
+}
+
+.gsp-icon {
+    font-size: 14px;
+}
+
+/* SVG icon styling */
+.gsp-card-icon svg {
+    width: 32px;
+    height: 32px;
+    color: var(--gsp-white);
+}
+
+.gsp-btn-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--gsp-primary);
+    transition: var(--gsp-transition);
+}
+
+.gsp-glass-btn:hover .gsp-btn-icon {
+    color: var(--gsp-white);
+}
+
+.gsp-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.gsp-copy-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    opacity: 0.6;
+}
+
+.gsp-file-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Balance Section */
+.gsp-balance-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.gsp-balance-card {
+    background: var(--gsp-card-bg);
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Balance Card Glow Effect */
+.gsp-balance-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--gsp-beam-glow) 0%, transparent 70%);
+    opacity: 0.1;
+    animation: pulseGlow 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.2;
+    }
+}
+
+.gsp-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.gsp-wallet-balance .gsp-card-icon {
+    background: linear-gradient(135deg, #0096ff 0%, #00d4ff 100%);
+}
+
+.gsp-savings-balance .gsp-card-icon {
+    background: linear-gradient(135deg, #00c853 0%, #69f0ae 100%);
+}
+
+.gsp-card-content h3 {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gsp-text-light);
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gsp-amount {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gsp-text-primary);
+    margin: 0;
+}
+
+/* Section Title */
+.gsp-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gsp-text-primary);
+    margin: 0 0 18px 0;
+    padding-left: 12px;
+    border-left: 3px solid var(--gsp-primary);
+}
+
+/* Actions Section */
+.gsp-actions-section {
+    margin-bottom: 30px;
+}
+
+.gsp-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 12px;
+}
+
+.gsp-glass-btn {
+    background: var(--gsp-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--gsp-glass-border);
+    border-radius: var(--gsp-border-radius-sm);
+    padding: 16px 10px;
+    cursor: pointer;
+    transition: var(--gsp-transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Button Beam Animation */
+.gsp-glass-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 150, 255, 0.1),
+        rgba(0, 212, 255, 0.15),
+        rgba(0, 150, 255, 0.1),
+        transparent
+    );
+    animation: btnBeam 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes btnBeam {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.gsp-glass-btn:hover {
+    background: linear-gradient(135deg, var(--gsp-primary) 0%, var(--gsp-primary-light) 100%);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 150, 255, 0.35);
+}
+
+.gsp-glass-btn:hover .gsp-btn-text {
+    color: var(--gsp-white);
+}
+
+.gsp-btn-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.gsp-btn-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gsp-text-primary);
+    text-align: center;
+    transition: var(--gsp-transition);
+}
+
+/* Transactions Section */
+.gsp-transactions-section {
+    margin-bottom: 20px;
+}
+
+.gsp-transactions-card {
+    background: var(--gsp-card-bg);
+    padding: 18px;
+    overflow: hidden;
+}
+
+.gsp-transactions-table-wrapper {
+    overflow-x: auto;
+}
+
+.gsp-transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+.gsp-transactions-table th,
+.gsp-transactions-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 150, 255, 0.1);
+    font-size: 12px;
+}
+
+.gsp-transactions-table th {
+    background: rgba(0, 150, 255, 0.1);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gsp-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gsp-transactions-table tr:hover td {
+    background: rgba(0, 150, 255, 0.05);
+}
+
+.gsp-transaction-type {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.gsp-type-deposit,
+.gsp-type-transfer-in {
+    background: rgba(0, 200, 83, 0.1);
+    color: #00c853;
+}
+
+.gsp-type-withdrawal,
+.gsp-type-transfer-out {
+    background: rgba(255, 82, 82, 0.1);
+    color: #ff5252;
+}
+
+.gsp-type-conversion-btc,
+.gsp-type-conversion-usdt,
+.gsp-type-conversion-bank {
+    background: rgba(0, 150, 255, 0.1);
+    color: var(--gsp-primary);
+}
+
+.gsp-transaction-amount {
+    font-weight: 600;
+    color: var(--gsp-text-primary);
+}
+
+.gsp-status {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.gsp-status-pending {
+    background: rgba(255, 193, 7, 0.15);
+    color: #e6a000;
+}
+
+.gsp-status-approved {
+    background: rgba(0, 200, 83, 0.15);
+    color: #00c853;
+}
+
+.gsp-status-declined {
+    background: rgba(255, 82, 82, 0.15);
+    color: #ff5252;
+}
+
+.gsp-transaction-date {
+    font-size: 13px;
+    color: var(--gsp-text-light);
+}
+
+.gsp-no-transactions {
+    text-align: center;
+    padding: 40px 20px !important;
+    color: var(--gsp-text-light);
+    font-style: italic;
+}
+
+/* Login Required */
+.gsp-login-required {
+    text-align: center;
+    padding: 60px 30px;
+    background: var(--gsp-card-bg);
+    border-radius: var(--gsp-border-radius);
+    box-shadow: var(--gsp-shadow);
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+.gsp-login-required p {
+    font-size: 18px;
+    color: var(--gsp-text-secondary);
+    margin-bottom: 25px;
+}
+
+.gsp-btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gsp-primary) 0%, var(--gsp-primary-light) 100%);
+    color: var(--gsp-white);
+    padding: 14px 35px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--gsp-transition);
+    box-shadow: 0 4px 15px rgba(0, 150, 255, 0.3);
+}
+
+.gsp-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 150, 255, 0.4);
+}
+
+/* Toast Notification */
+.gsp-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10001;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.gsp-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.gsp-toast.success {
+    background: linear-gradient(135deg, #00c853 0%, #69f0ae 100%);
+    color: var(--gsp-white);
+}
+
+.gsp-toast.error {
+    background: linear-gradient(135deg, #ff5252 0%, #ff8a80 100%);
+    color: var(--gsp-white);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gsp-dashboard {
+        padding: 15px;
+    }
+    
+    .gsp-header {
+        padding: 20px;
+    }
+    
+    .gsp-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .gsp-user-info {
+        flex-direction: column;
+    }
+    
+    .gsp-user-details h1 {
+        font-size: 22px;
+    }
+    
+    .gsp-avatar {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .gsp-balance-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .gsp-balance-card {
+        padding: 20px;
+    }
+    
+    .gsp-amount {
+        font-size: 26px;
+    }
+    
+    .gsp-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .gsp-glass-btn {
+        padding: 18px 10px;
+    }
+    
+    .gsp-btn-icon {
+        font-size: 26px;
+    }
+    
+    .gsp-btn-text {
+        font-size: 11px;
+    }
+    
+    .gsp-transactions-card {
+        padding: 15px;
+    }
+    
+    .gsp-transactions-table th,
+    .gsp-transactions-table td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gsp-dashboard {
+        padding: 10px;
+    }
+    
+    .gsp-header {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    .gsp-user-details h2 {
+        font-size: 12px;
+    }
+    
+    .gsp-user-details h1 {
+        font-size: 18px;
+    }
+    
+    .gsp-section-title {
+        font-size: 18px;
+    }
+    
+    .gsp-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .gsp-theme-toggle {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Theme Toggle Button */
+.gsp-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--gsp-transition);
+    color: var(--gsp-white);
+    margin-right: 15px;
+}
+
+.gsp-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.gsp-theme-toggle .iconify {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.5s ease;
+}
+
+.gsp-theme-toggle:hover .iconify {
+    transform: rotate(180deg);
+}
+
+/* Theme Toggle Icon Styles - Inline SVG */
+.gsp-theme-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.5s ease;
+}
+
+.gsp-theme-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+    color: var(--gsp-white) !important;
+    stroke: var(--gsp-white) !important;
+}
+
+.gsp-theme-toggle:hover .gsp-theme-icon {
+    transform: rotate(180deg);
+}
+
+[data-theme="light"] .gsp-theme-icon svg {
+    color: var(--gsp-primary) !important;
+    stroke: var(--gsp-primary) !important;
+}
+
+/* Iconify Icon Styles - Enhanced for reliable display */
+.iconify {
+    display: inline-block !important;
+    vertical-align: middle;
+}
+
+/* Card icons - white color */
+.gsp-card-icon .iconify,
+.gsp-card-icon svg,
+.gsp-card-icon iconify-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px;
+    min-height: 32px;
+    color: var(--gsp-white) !important;
+    fill: currentColor;
+}
+
+/* Button icons - blue color by default */
+.gsp-btn-icon.iconify,
+.gsp-glass-btn .iconify,
+.gsp-action-btn .iconify,
+.gsp-btn-icon svg,
+.gsp-glass-btn svg,
+.gsp-action-btn svg {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px;
+    min-height: 32px;
+    color: var(--gsp-primary) !important;
+    fill: currentColor;
+    transition: var(--gsp-transition);
+}
+
+/* Button icons - white on hover */
+.gsp-glass-btn:hover .iconify,
+.gsp-glass-btn:hover svg,
+.gsp-action-btn:hover .iconify,
+.gsp-action-btn:hover svg,
+.gsp-glass-btn:hover .gsp-btn-icon.iconify,
+.gsp-glass-btn:hover .gsp-btn-icon svg {
+    color: var(--gsp-white) !important;
+}
+
+/* Header button icons */
+.gsp-btn-home .iconify,
+.gsp-btn-logout .iconify,
+.gsp-btn-home svg,
+.gsp-btn-logout svg {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    min-height: 18px;
+    color: var(--gsp-white) !important;
+}
+
+/* Light mode specific overrides */
+[data-theme="light"] .gsp-theme-toggle {
+    background: rgba(0, 100, 200, 0.1);
+    border-color: rgba(0, 100, 200, 0.2);
+    color: var(--gsp-primary);
+}
+
+[data-theme="light"] .gsp-theme-toggle:hover {
+    background: rgba(0, 100, 200, 0.2);
+}
+
+/* Reduce animations in light mode for better visibility */
+[data-theme="light"] .gsp-noodle,
+[data-theme="light"] .gsp-noodle-h {
+    opacity: 0.4;
+}
+
+/* Light mode adjusts card beam */
+[data-theme="light"] .gsp-glass-card::before {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 150, 255, 0.03),
+        rgba(0, 212, 255, 0.06),
+        rgba(0, 150, 255, 0.03),
+        transparent
+    );
+}
+
+/* Bitcoin icon specific fallback */
+.gsp-btc-icon {
+    position: relative;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.gsp-btc-icon:empty::before,
+.gsp-btc-icon:not(:has(svg))::before {
+    content: '₿';
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--gsp-primary) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.gsp-glass-btn:hover .gsp-btc-icon:empty::before,
+.gsp-glass-btn:hover .gsp-btc-icon:not(:has(svg))::before,
+.gsp-action-btn:hover .gsp-btc-icon:empty::before,
+.gsp-action-btn:hover .gsp-btc-icon:not(:has(svg))::before {
+    color: var(--gsp-white) !important;
+}
+
+/* Smooth transition for theme changes */
+.gsp-dashboard,
+.gsp-dashboard *,
+.gsp-dashboard *::before,
+.gsp-dashboard *::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Profile Avatar - Clickable for edit */
+.gsp-avatar-clickable {
+    cursor: pointer;
+    position: relative;
+    transition: var(--gsp-transition);
+}
+
+.gsp-avatar-clickable:hover {
+    transform: scale(1.05);
+}
+
+.gsp-avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 150, 255, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--gsp-transition);
+}
+
+.gsp-avatar-clickable:hover .gsp-avatar-overlay {
+    opacity: 1;
+}
+
+.gsp-avatar-overlay svg {
+    color: var(--gsp-white);
+    width: 24px;
+    height: 24px;
+}
+
+/* Profile Avatar Section in Modal */
+.gsp-profile-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--gsp-glass-border);
+}
+
+.gsp-profile-avatar-preview {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--gsp-primary);
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
+    cursor: pointer;
+}
+
+.gsp-profile-avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gsp-avatar-edit-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 150, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--gsp-transition);
+}
+
+.gsp-profile-avatar-preview:hover .gsp-avatar-edit-overlay {
+    opacity: 1;
+}
+
+.gsp-avatar-edit-overlay svg {
+    color: var(--gsp-white);
+    width: 32px;
+    height: 32px;
+}
+
+.gsp-file-hidden {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+
+.gsp-btn-secondary {
+    background: rgba(0, 150, 255, 0.15);
+    color: var(--gsp-primary);
+    border: 1px solid var(--gsp-primary);
+    padding: 10px 20px;
+    font-size: 13px;
+}
+
+.gsp-btn-secondary:hover {
+    background: rgba(0, 150, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.gsp-btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+}
+
+.gsp-avatar-hint {
+    font-size: 12px;
+    color: var(--gsp-text-light);
+    margin: 0;
+}
+
+/* Form Divider */
+.gsp-form-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.gsp-form-divider::before,
+.gsp-form-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gsp-glass-border);
+}
+
+.gsp-form-divider span {
+    font-size: 12px;
+    color: var(--gsp-text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+/* Light mode profile adjustments */
+[data-theme="light"] .gsp-profile-avatar-preview {
+    border-color: var(--gsp-primary);
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.2);
+}
+
+[data-theme="light"] .gsp-btn-secondary {
+    background: rgba(0, 100, 200, 0.1);
+}
+
+[data-theme="light"] .gsp-btn-secondary:hover {
+    background: rgba(0, 100, 200, 0.2);
+}
